@@ -14,11 +14,10 @@ CXXFLAGS	= -Wall -Werror -Wextra -std=c++98
 vpath %.cpp	src
 vpath %.hpp	include
 
-
 all :
 	@make $(NAME)
 
-$(NAME): $(OBJ)
+$(NAME): $(OBJ) 
 	@$(CXX) $(CXXFLAGS) $(OBJ) -o $(NAME)
 	@echo $(NAME) DONE ✅ 
 
