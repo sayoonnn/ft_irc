@@ -1,12 +1,13 @@
 
 NAME	=	ircserv
 
-SRC		=	main.cpp
+SRC		=	main.cpp\
+			Server.cpp
 
 OBJDIR	=	.objs
 OBJ		=	$(SRC:%.cpp=$(OBJDIR)/%.o)
 
-INC		=	includes
+INC		=	include
 
 CXX			= c++
 CXXFLAGS	= -Wall -Werror -Wextra -std=c++98

@@ -6,21 +6,30 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sstream>
 #include <iostream>
+#include <vector>
 
 class Server {
 
 	private:
-		int servSocket;
-		int servPort;
-		struct sockaddr_in servAddr;
+		int 				_servSocket;
+		int 				_servPort;
+		struct sockaddr_in	_servAddr;
+		std::string 		_password;
+
+		std::vector<int> fds;
+
+		Server();
+		Server(const Server&);
+		Server &operator=(const Server&);
+
+		void makeServerReady(char *);
 
 	public:
-		Server();
+		Server(char *, char *);
 		~Server();
-		Server(const Server& copy);
-		Server& operator=(const Server& copy);
 
-		
+		void runServer();
 
 };
