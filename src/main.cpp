@@ -10,4 +10,5 @@ int main(int ac, char **av) {
 	}
 
 	Server ircServer(av[PORT], av[PASSWORD]);
+	ircServer.runServer();
 }
