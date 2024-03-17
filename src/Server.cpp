@@ -18,14 +18,6 @@ Server::Server(__attribute__((unused)) const Server& copy) {}
 
 Server &Server::operator=(__attribute__((unused)) const Server& copy) { return (*this); }
 
-
-void Server::sayHelloToClient(int clientFd) {
-	sendMessageToClient(clientFd, RPL_WELCOME(std::string("sayoon")));
-	sendMessageToClient(clientFd, RPL_YOURHOST(std::string("sayoon")));
-	sendMessageToClient(clientFd, RPL_CREATED(std::string("sayoon"), std::string("2020-11-11")));
-	sendMessageToClient(clientFd, RPL_MYINFO(std::string("sayoon")));
-}
-
 void Server::runServer() {
 	
 	printLog("started");

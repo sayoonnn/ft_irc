@@ -72,3 +72,10 @@ void Server::sendMessageToClient(int clientFd, std::string message) {
 		exit(1);
 	}
 }
+
+void Server::sayHelloToClient(int clientFd) {
+	sendMessageToClient(clientFd, RPL_WELCOME(std::string("sayoon")));
+	sendMessageToClient(clientFd, RPL_YOURHOST(std::string("sayoon")));
+	sendMessageToClient(clientFd, RPL_CREATED(std::string("sayoon"), std::string("2020-11-11")));
+	sendMessageToClient(clientFd, RPL_MYINFO(std::string("sayoon")));
+}

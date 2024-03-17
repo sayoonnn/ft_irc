@@ -3,7 +3,10 @@ NAME	=	ircserv
 
 SRC		=	main.cpp\
 			Server.cpp\
+			ServerKqueue.cpp\
+			ServerNetwor.cpp\
 			Client.cpp
+
 
 OBJDIR	=	.objs
 OBJ		=	$(SRC:%.cpp=$(OBJDIR)/%.o)
