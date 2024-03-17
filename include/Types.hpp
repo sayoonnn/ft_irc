@@ -1,7 +1,10 @@
 
 #pragma once
 
-#define FAIL -1
+enum {
+	FAIL = -1,
+	SUCCESS = 42
+};
 
 enum {
 	PORT = 1,

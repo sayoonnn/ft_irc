@@ -50,18 +50,11 @@ void Server::runServer() {
 				_clients[clientSocket] = Client(clientSocket);
 			}
 			else if (curEvent.filter == EVFILT_READ) {
-				recvNAddToBuffer(curSocket);
-
-				if (_clients[curSocket].isBufferEndNl()) {
-					std::cout << _clients[curSocket].getBuffer() << "\n";
+				if (recvNAddToBuffer(curSocket) == SUCCESS && 
+				_clients[curSocket].isBufferEndNl()) {
+					std::cout << _clients[curSocket].getBuffer();
 					_clients[curSocket].clearBuffer();
 				}
-			}
-			else if (curEvent.flags & EV_EOF) {
-				std::cout << "[Client " << curSocket << "]: disconnected" << "\n";
-				removeClientKq(curSocket);
-				_clients.erase(_clients.find(curSocket));
-				close(curSocket);
 			}
 		}
 	}

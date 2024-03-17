@@ -40,7 +40,7 @@ void Server::openServerSocket(char *port) {
 
 }
 
-void Server::recvNAddToBuffer(int clientFd) {
+int Server::recvNAddToBuffer(int clientFd) {
 
 	int length;
 	char buffer[BUFFER_SIZE];
@@ -48,8 +48,13 @@ void Server::recvNAddToBuffer(int clientFd) {
 
 	length = recv(clientFd, buffer, BUFFER_SIZE - 1, 0);
 
-	if (length == 0)
-		return ;
+	if (length == 0) {
+		std::cout << "[Client " << clientFd << "]: disconnected" << "\n";
+		removeClientKq(clientFd);
+		_clients.erase(_clients.find(clientFd));
+		close(clientFd);
+		return (FAIL);
+	}
 
 	buffer[length] = 0;
 	tmp += buffer;
@@ -61,6 +66,8 @@ void Server::recvNAddToBuffer(int clientFd) {
 	}
 
 	_clients[clientFd].addToBuffer(tmp);
+
+	return (SUCCESS);
 }
 
 void Server::sendMessageToClient(int clientFd, std::string message) {

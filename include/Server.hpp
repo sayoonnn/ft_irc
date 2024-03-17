@@ -48,7 +48,7 @@ class Server {
 
 		void sayHelloToClient(int);
 
-		void recvNAddToBuffer(int);
+		int recvNAddToBuffer(int);
 		void sendMessageToClient(int, std::string);
 
 		void printLog(std::string logMsg);
