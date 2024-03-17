@@ -189,7 +189,7 @@ void Server::recvNAddToBuffer(int clientFd) {
 	length = recv(clientFd, buffer, BUFFER_SIZE - 1, 0);
 
 	if (length == 0)
-		return (false);
+		return ;
 
 	buffer[length] = 0;
 	tmp += buffer;
@@ -218,6 +218,3 @@ void Server::printLog(std::string logMsg) {
 	std::cout << "[SERVER] " << logMsg << "\n";
 }
 
-void Server::cmdNick() {
-	
-}
