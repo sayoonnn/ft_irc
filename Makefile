@@ -4,7 +4,7 @@ NAME	=	ircserv
 SRC		=	main.cpp\
 			Server.cpp\
 			ServerKqueue.cpp\
-			ServerNetwor.cpp\
+			ServerNetwork.cpp\
 			Client.cpp
 
 

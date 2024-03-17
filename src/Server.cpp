@@ -37,9 +37,9 @@ void Server::runServer() {
 		for (int i = 0; i < eventCnt; i++) {
 
 			struct kevent curEvent = _eventList[i];
-			int curFd = _eventList[i].ident;
+			int curSocket = _eventList[i].ident;
 
-			if (curFd == _servSocket) {	
+			if (curSocket == _servSocket) {	
 				int clientSocket;
 
 				clientSocket = accept(_servSocket, NULL, NULL);
@@ -50,17 +50,18 @@ void Server::runServer() {
 				_clients[clientSocket] = Client(clientSocket);
 			}
 			else if (curEvent.filter == EVFILT_READ) {
-				recvNAddToBuffer(curFd);
+				recvNAddToBuffer(curSocket);
 
-				if (_clients[curFd].isBufferEndNl()) {
-					
+				if (_clients[curSocket].isBufferEndNl()) {
+					std::cout << _clients[curSocket].getBuffer() << "\n";
+					_clients[curSocket].clearBuffer();
 				}
 			}
 			else if (curEvent.flags & EV_EOF) {
-				std::cout << "[Client " << curFd << "]: disconnected" << "\n";
-				removeClientKq(curFd);
-				_clients.erase(_clients.find(curFd));
-				close(curFd);
+				std::cout << "[Client " << curSocket << "]: disconnected" << "\n";
+				removeClientKq(curSocket);
+				_clients.erase(_clients.find(curSocket));
+				close(curSocket);
 			}
 		}
 	}
