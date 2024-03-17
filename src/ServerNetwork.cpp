@@ -1,6 +1,7 @@
 
 #include "Server.hpp"
 #include "Types.hpp"
+#include "RPL.hpp"
 
 void Server::openServerSocket(char *port) {
 
