@@ -26,9 +26,9 @@ class Command {
 		void compactSpace(std::string&);
 		void parseByString(std::string, std::string, std::deque<std::string>&);
 
-		// void PASS(std::deque<std::string>&, Client &);
+		void PASS(std::deque<std::string>&, Client &);
 		void NICK(std::deque<std::string>&, Client &);
-		// void USER(std::deque<std::string>&, Client &);
+		void USER(std::deque<std::string>&, Client &);
 
 		void sendError(int, Client &);
 		

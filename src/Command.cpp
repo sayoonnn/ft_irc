@@ -120,3 +120,13 @@ void Command::NICK(std::deque<std::string> &parsedCmd, Client &client) {
 	client.setNickname(parsedCmd[1]);
 }
 
+void Command::PASS(std::deque<std::string> &parsedCmd, Client &client) {
+
+	client.setPassed();
+}
+
+void Command::USER(std::deque<std::string> &parsedCmd, Client &client) {
+
+	client.setUsername(parsedCmd[1]);
+}
+
