@@ -11,6 +11,8 @@ class Client {
 		std::string _username;
 		std::string _realname;
 
+		bool _isPassed;
+
 		std::string _buffer;
 
 
@@ -26,15 +28,19 @@ class Client {
 		std::string getUsername() const;
 		std::string getRealname() const;
 		std::string getBuffer() const;
+		bool isPassed() const;
 
 		void setSocket(int);
 		void setNickname(std::string);
 		void setUsername(std::string);
 		void setRealname(std::string);
 		void setBuffer(std::string);
+		void setPassed();
 
 		void clearBuffer();
 		void addToBuffer(std::string);
 		bool isBufferEndNl();
+		
+		bool isRegistered();
 
 };

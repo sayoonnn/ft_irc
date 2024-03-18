@@ -61,6 +61,8 @@
 		"utility": "cpp",
 		"vector": "cpp",
 		"__tree": "cpp",
-		"map": "cpp"
+		"map": "cpp",
+		"deque": "cpp",
+		"__functional_base_03": "cpp"
 	}
 }

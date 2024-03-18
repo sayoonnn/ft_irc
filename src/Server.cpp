@@ -53,6 +53,7 @@ void Server::runServer() {
 				if (recvNAddToBuffer(curSocket) == SUCCESS && 
 				_clients[curSocket].isBufferEndNl()) {
 					std::cout << _clients[curSocket].getBuffer();
+					_commands.excuteCommands(_clients[curSocket]);
 					_clients[curSocket].clearBuffer();
 				}
 			}

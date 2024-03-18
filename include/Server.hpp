@@ -15,6 +15,7 @@
 #include <errno.h>
 
 #include "Client.hpp"
+#include "Command.hpp"
 
 #define EVENT_SIZE 64
 #define BUFFER_SIZE 1024
@@ -24,6 +25,7 @@ class Server {
 	private:
 
 		std::map<int, Client> _clients;
+		Command _commands;
 
 		int 				_servSocket;
 		int 				_servPort;

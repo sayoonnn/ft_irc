@@ -5,6 +5,7 @@ SRC		=	main.cpp\
 			Server.cpp\
 			ServerKqueue.cpp\
 			ServerNetwork.cpp\
+			Command.cpp\
 			Client.cpp
 
 
