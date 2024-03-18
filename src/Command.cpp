@@ -1,7 +1,5 @@
 
 #include "Command.hpp"
-#include <iostream>
-
 
 Command::Command() {
 	// _cmdMap["PASS"] = &Command::PASS;
@@ -45,9 +43,6 @@ void Command::parseByString(std::string target, std::string delimeter, std::dequ
 	}
 
 	commands.push_back(target.substr(start, target.size()));
-
-	for (size_t i = 0; i < commands.size(); i++)
-		std::cout << commands[i] << std::endl;
 }
 
 void  Command::compactSpace(std::string& str) {
@@ -100,10 +95,10 @@ void Command::excuteCommands(Client& client)
 		}
 		else {
 			cmdType = parsedCmd[0];
-
-			if (isValidCmdFormat(parsedCmd) > 0 && 
+			errCode = isValidCmdFormat(parsedCmd);
+			if (!errCode &&
 			(cmdType == "USER" || cmdType == "NICK" || cmdType == "PASS")) {
-				if (n_str == -1)
+				if (errCode == -1)
 					sendError(461, client);
 				else
 					(this->*_cmdMap[cmdType])(parsedCmd, client);
@@ -123,6 +118,5 @@ void Command::sendError(int errNum, Client &client) { (void) errNum, (void) clie
 void Command::NICK(std::deque<std::string> &parsedCmd, Client &client) {
 
 	client.setNickname(parsedCmd[1]);
-	std::cout << client.getNickname()  << std::endl;
 }
 
