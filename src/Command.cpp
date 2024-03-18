@@ -1,10 +1,11 @@
 
 #include "Command.hpp"
+#include <iostream>
 
 Command::Command() {
-	// _cmdMap["PASS"] = &Command::PASS;
+	_cmdMap["PASS"] = &Command::PASS;
 	_cmdMap["NICK"] = &Command::NICK;
-	// _cmdMap["USER"] = &Command::USER;
+	_cmdMap["USER"] = &Command::USER;
 }
 
 Command::~Command() {}
@@ -42,7 +43,8 @@ void Command::parseByString(std::string target, std::string delimeter, std::dequ
 		loc = target.find("\n", start);
 	}
 
-	commands.push_back(target.substr(start, target.size()));
+	if (start != target.size())
+		commands.push_back(target.substr(start, target.size()));
 }
 
 void  Command::compactSpace(std::string& str) {
@@ -76,7 +78,7 @@ void Command::excuteCommands(Client& client)
 	int							errCode;
 
 	parseByString(client.getBuffer(), "\n", commands);
-	
+
 	for (size_t i = 0; i < commands.size(); i++) {
 
 		compactSpace(commands[i]);
@@ -96,8 +98,7 @@ void Command::excuteCommands(Client& client)
 		else {
 			cmdType = parsedCmd[0];
 			errCode = isValidCmdFormat(parsedCmd);
-			if (!errCode &&
-			(cmdType == "USER" || cmdType == "NICK" || cmdType == "PASS")) {
+			if (cmdType == "USER" || cmdType == "NICK" || cmdType == "PASS") {
 				if (errCode == -1)
 					sendError(461, client);
 				else
@@ -113,7 +114,12 @@ void Command::excuteCommands(Client& client)
 	client.clearBuffer();
 }
 
-void Command::sendError(int errNum, Client &client) { (void) errNum, (void) client;}
+
+
+void Command::sendError(int errNum, Client &client) { 
+	(void) errNum, (void) client;
+	std::cout << "error: invalid command" << std::endl;
+}
 
 void Command::NICK(std::deque<std::string> &parsedCmd, Client &client) {
 
@@ -122,6 +128,7 @@ void Command::NICK(std::deque<std::string> &parsedCmd, Client &client) {
 
 void Command::PASS(std::deque<std::string> &parsedCmd, Client &client) {
 
+	(void)parsedCmd;
 	client.setPassed();
 }
 

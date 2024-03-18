@@ -48,7 +48,7 @@ int Server::recvNAddToBuffer(int clientFd) {
 
 	length = recv(clientFd, buffer, BUFFER_SIZE - 1, 0);
 
-	if (length == 0) {
+	if (length == -1) {
 		std::cout << "[Client " << clientFd << "]: disconnected" << "\n";
 		removeClientKq(clientFd);
 		_clients.erase(_clients.find(clientFd));

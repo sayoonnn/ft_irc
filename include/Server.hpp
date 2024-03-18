@@ -54,14 +54,6 @@ class Server {
 		void sendMessageToClient(int, std::string);
 
 		void printLog(std::string logMsg);
-
-		std::vector<std::string> *parseCommand(std::string);
-
-		void checkExecCmd(std::string);
-
-		void cmdNICK(Client &);
-		void cmdPASS(Client &);
-		void cmdUSER(Client &);
 		
 	public:
 		Server(char *, char *);

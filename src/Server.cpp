@@ -61,30 +61,6 @@ void Server::runServer() {
 	}
 }
 
-void Server::checkExecCmd(std::string cmd) {
-	std::vector<std::string> *tmp = parseCommand(cmd);
-
-	(void)tmp;
-}
-
-std::vector<std::string> *Server::parseCommand(std::string cmd) {
-
-	std::vector<std::string> *ret = new std::vector<std::string>;
-	size_t prev;
-	size_t delimeter;
-
-	prev = 0;
-	delimeter = cmd.find(" ");
-
-	while (delimeter != std::string::npos) {
-		ret->push_back(cmd.substr(prev, delimeter));
-		prev = delimeter;
-		delimeter = cmd.find(" ", prev);
-	}
-
-	return (ret);
-}
-
 void Server::printLog(std::string logMsg) {
 	std::cout << "[SERVER] " << logMsg << "\n";
 }
