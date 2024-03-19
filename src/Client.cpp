@@ -1,7 +1,7 @@
 
 #include "Client.hpp"
 
-Client::Client(): _socket(-1), _nickname(""), _username(""), _realname(""), _isPassed(false) {}
+Client::Client(): _socket(-1), _nickname(""), _username(""), _realname(""), _isPassed(false), _isRegistered(false) {}
 
 Client::Client(int socket): _socket(socket) {}
 
@@ -49,6 +49,8 @@ void Client::setBuffer(std::string string) { _buffer = string; }
 
 void Client::setPassed() { _isPassed = true; }
 
+void Client::setRegistered() { _isRegistered = true; }
+
 
 void Client::clearBuffer() { _buffer.clear(); };
 
@@ -59,5 +61,5 @@ bool Client::isBufferEndNl() {
 }
 
 bool Client::isRegistered() {
-	return (_nickname != "" && _username != "" && _realname != "");
+	return (_isRegistered);
 }

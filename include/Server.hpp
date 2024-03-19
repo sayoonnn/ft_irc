@@ -55,14 +55,12 @@ class Server {
 
 		void sayHelloToClient(int);
 
-		int recvNAddToBuffer(int);
+		int recvMessageFromClient(int);
 		void sendMessageToClient(int, std::string);
 
 		void printLog(std::string logMsg);
 
-
 		void makeCmdMap();
-
 
 		void excuteCommands(Client&);
 
@@ -73,7 +71,6 @@ class Server {
 		void NICK(std::deque<std::string>&, Client &);
 		void USER(std::deque<std::string>&, Client &);
 
-		void sendError(int, Client &);
 		
 	public:
 		Server(char *, char *);

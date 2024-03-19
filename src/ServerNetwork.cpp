@@ -40,7 +40,7 @@ void Server::openServerSocket(char *port) {
 
 }
 
-int Server::recvNAddToBuffer(int clientFd) {
+int Server::recvMessageFromClient(int clientFd) {
 
 	int length;
 	char buffer[BUFFER_SIZE];

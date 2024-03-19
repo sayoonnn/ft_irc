@@ -12,6 +12,7 @@ class Client {
 		std::string _realname;
 
 		bool _isPassed;
+		bool _isRegistered;
 
 		std::string _buffer;
 
@@ -36,6 +37,7 @@ class Client {
 		void setRealname(std::string);
 		void setBuffer(std::string);
 		void setPassed();
+		void setRegistered();
 
 		void clearBuffer();
 		void addToBuffer(std::string);

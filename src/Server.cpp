@@ -51,7 +51,7 @@ void Server::runServer() {
 				_clients[clientSocket] = Client(clientSocket);
 			}
 			else if (curEvent.filter == EVFILT_READ) {
-				if (recvNAddToBuffer(curSocket) == SUCCESS && 
+				if (recvMessageFromClient(curSocket) == SUCCESS && 
 				_clients[curSocket].isBufferEndNl()) {
 					std::cout << _clients[curSocket].getBuffer();
 					excuteCommands(_clients[curSocket]);
@@ -113,20 +113,19 @@ void Server::excuteCommands(Client& client)
 
 		parseCommand(commands[i], parsedCmd);
 
-		for(size_t i = 0; i < parsedCmd.size(); i++)
-			std::cout << parsedCmd[i] << std::endl;
-
 		if (parsedCmd.size() == 0)
 			continue ;
 
 		cmdType = parsedCmd[0];
 
-		if (_cmdMap.find(cmdType) == _cmdMap.end() && !client.isRegistered())
-			sendError(421, client);
+		if (_cmdMap.find(cmdType) == _cmdMap.end())
+			sendMessageToClient(client.getSocket(), ERR_UNKNOWNCOMMAND(client.getRealname(), parsedCmd[0]));
 		else if (cmdType == "PASS" || client.isRegistered())
 			(this->*_cmdMap[cmdType])(parsedCmd, client);
+		else if ((cmdType == "NICK" || cmdType == "USER") && client.isPassed())
+			(this->*_cmdMap[cmdType])(parsedCmd, client);
 		else
-			sendError(451, client);
+			sendMessageToClient(client.getSocket(), ERR_NOTREGISTERED(client.getRealname()));
 
 		parsedCmd.clear();
 	}
@@ -134,24 +133,65 @@ void Server::excuteCommands(Client& client)
 	client.clearBuffer();
 }
 
-void Server::sendError(int errNum, Client &client) { 
-	(void) errNum, (void) client;
-	std::cout << "error: invalid command" << std::endl;
-}
-
 void Server::NICK(std::deque<std::string> &parsedCmd, Client &client) {
 
+	if (parsedCmd.size() < 2) {
+		sendMessageToClient(client.getSocket(), ERR_NEEDMOREPARAMS(client.getNickname(), "NICK"));
+		return ;
+	}
+
+	std::map<int, Client>::iterator it = _clients.begin();
+
+	for(; it != _clients.end(); it++) {
+		if ((*it).second.getNickname() == parsedCmd[1]) {
+			sendMessageToClient(client.getSocket(), ERR_NICKNAMEINUSE(client.getUsername(), parsedCmd[1]));
+			return ;
+		}
+	}
+
 	client.setNickname(parsedCmd[1]);
+
+	if (client.isPassed() && client.getUsername() != "")
+		client.setRegistered();
 }
 
 void Server::PASS(std::deque<std::string> &parsedCmd, Client &client) {
 
-	(void)parsedCmd;
-	sayHelloToClient(client.getSocket());
+	if (parsedCmd.size() < 2) {
+		sendMessageToClient(client.getSocket(), ERR_NEEDMOREPARAMS(client.getNickname(), "PASS"));
+		return ;
+	}
+
+	if (client.isPassed()) {
+		sendMessageToClient(client.getSocket(), ERR_ALREADYREGISTERED(client.getNickname()));
+		return ;
+	}
+
+	if (_password != parsedCmd[1]) {
+		sendMessageToClient(client.getSocket(), ERR_PASSWDMISMATCH(client.getNickname()));
+		return ;
+	}
+
 	client.setPassed();
 }
 
 void Server::USER(std::deque<std::string> &parsedCmd, Client &client) {
 
+	if (parsedCmd.size() < 5) {
+		sendMessageToClient(client.getSocket(), ERR_NEEDMOREPARAMS(client.getNickname(), "USER"));
+		return ;
+	}
+
+	if (client.isRegistered()) {
+		sendMessageToClient(client.getSocket(), ERR_ALREADYREGISTERED(client.getNickname()));
+		return ;
+	}
+
 	client.setUsername(parsedCmd[1]);
+	client.setRealname(parsedCmd[4]);
+
+	if (client.isPassed() && client.getNickname() != "") {
+		client.setRegistered();
+		sayHelloToClient(client.getSocket());
+	}
 }
