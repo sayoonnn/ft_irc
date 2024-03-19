@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include "Channel.hpp"
+#include <map>
 #include <string>
 
 class Client {
@@ -10,6 +12,7 @@ class Client {
 		std::string _nickname;
 		std::string _username;
 		std::string _realname;
+		std::map<std::string channel_name, Channel c> _channels;
 
 		std::string _buffer;
 
