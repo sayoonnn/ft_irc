@@ -21,8 +21,6 @@ class Command {
 
 		void excuteCommands(Client&);
 
-		int isValidCmdFormat(std::deque<std::string> &);
-
 		void compactSpace(std::string&);
 		void parseByString(std::string, std::string, std::deque<std::string>&);
 

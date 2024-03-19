@@ -7,15 +7,18 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
+
+#include <iostream>
+#include <string>
 #include <sstream>
 #include <iostream>
 #include <vector>
 #include <map>
-#include <fcntl.h>
-#include <errno.h>
+#include <deque>
 
 #include "Client.hpp"
-#include "Command.hpp"
 
 #define EVENT_SIZE 64
 #define BUFFER_SIZE 1024
@@ -23,9 +26,11 @@
 class Server {
 
 	private:
+		typedef	void (Server::*commandFunc)(std::deque<std::string>&, Client &);
 
 		std::map<int, Client> _clients;
-		Command _commands;
+		std::map<std::string, commandFunc> _cmdMap;
+
 
 		int 				_servSocket;
 		int 				_servPort;
@@ -54,6 +59,21 @@ class Server {
 		void sendMessageToClient(int, std::string);
 
 		void printLog(std::string logMsg);
+
+
+		void makeCmdMap();
+
+
+		void excuteCommands(Client&);
+
+		void parseCommand(std::string, std::deque<std::string>&);
+		void parseByChar(std::string, char, std::deque<std::string>&);
+
+		void PASS(std::deque<std::string>&, Client &);
+		void NICK(std::deque<std::string>&, Client &);
+		void USER(std::deque<std::string>&, Client &);
+
+		void sendError(int, Client &);
 		
 	public:
 		Server(char *, char *);

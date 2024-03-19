@@ -10,35 +10,13 @@ Command::Command() {
 
 Command::~Command() {}
 
-int	Command::isValidCmdFormat(std::deque<std::string> &parsedCmd) {
-
-	size_t paramNeed;
-	std::string cmdType;
-
-	cmdType = parsedCmd[0];
-
-	if (cmdType == "QUIT" || cmdType == "MODE" || cmdType== "PONG")
-		paramNeed = 1;
-	else if (cmdType == "PASS" || cmdType == "NICK" || cmdType == "PART" || cmdType == "JOIN" || cmdType  == "PRIVMSG" || cmdType  == "TOPIC" || cmdType == "PING" || cmdType == "PART")
-		paramNeed = 2;
-	else if (cmdType == "KICK" || cmdType == "INVITE")
-		paramNeed = 3;
-	else if (cmdType == "USER")
-		paramNeed = 5;
-	else
-		return (CMD_NOT_FOUND);
-
-	return (paramNeed == parsedCmd.size());
-}
-
-
 void Command::parseByString(std::string target, std::string delimeter, std::deque<std::string> &commands) {
 
 	size_t start = 0;
 	size_t loc = target.find(delimeter, start);
 
 	while (loc != std::string::npos) {
-		commands.push_back(target.substr(start, loc));
+		commands.push_back(target.substr(start, loc - 1));
 		start = loc + 1;
 		loc = target.find("\n", start);
 	}
@@ -83,38 +61,20 @@ void Command::excuteCommands(Client& client)
 
 		compactSpace(commands[i]);
 		parseByString(commands[i], " ", parsedCmd);
+		cmdType = parsedCmd[0];
 
-		if (client.isRegistered()) {
-			errCode = isValidCmdFormat(parsedCmd);
-			if (errCode == -1)
-				sendError(461, client);
-			else if (errCode == 0)
-				sendError(421, client);
-			else if (parsedCmd[0] == "USER" || parsedCmd[0] == "PASS")
-				sendError(462, client);
-			else
-				(this->*_cmdMap[cmdType])(parsedCmd, client);
-		}
-		else {
-			cmdType = parsedCmd[0];
-			errCode = isValidCmdFormat(parsedCmd);
-			if (cmdType == "USER" || cmdType == "NICK" || cmdType == "PASS") {
-				if (errCode == -1)
-					sendError(461, client);
-				else
-					(this->*_cmdMap[cmdType])(parsedCmd, client);
-			}
-			else
-				sendError(451, client);
-		}
+		if (_cmdMap.find(cmdType) == _cmdMap.end())
+			sendError(421, client);
+		else if (cmdType == "PASS" || client.isRegistered())
+			(this->*_cmdMap[cmdType])(parsedCmd, client);
+		else
+			sendError(451, client);
 
 		parsedCmd.clear();
 	}
 
 	client.clearBuffer();
 }
-
-
 
 void Command::sendError(int errNum, Client &client) { 
 	(void) errNum, (void) client;

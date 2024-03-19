@@ -8,6 +8,7 @@ Server::Server(char *port, char *password): _password(password) {
 	printLog("setup");
 	openServerSocket(port);
 	makeKqueueReady();
+	makeCmdMap();
 }
 
 Server::~Server() {
@@ -53,7 +54,7 @@ void Server::runServer() {
 				if (recvNAddToBuffer(curSocket) == SUCCESS && 
 				_clients[curSocket].isBufferEndNl()) {
 					std::cout << _clients[curSocket].getBuffer();
-					_commands.excuteCommands(_clients[curSocket]);
+					excuteCommands(_clients[curSocket]);
 					_clients[curSocket].clearBuffer();
 				}
 			}
@@ -65,3 +66,92 @@ void Server::printLog(std::string logMsg) {
 	std::cout << "[SERVER] " << logMsg << "\n";
 }
 
+
+void Server::makeCmdMap() {
+	_cmdMap["PASS"] = &Server::PASS;
+	_cmdMap["NICK"] = &Server::NICK;
+	_cmdMap["USER"] = &Server::USER;
+}
+
+void Server::parseByChar(std::string target, char delimeter, std::deque<std::string> &commands) {
+
+	std::stringstream ss(target);
+	std::string tmp;
+
+	while (std::getline(ss, tmp, delimeter))
+		commands.push_back(tmp);
+}
+
+void  Server::parseCommand(std::string str, std::deque<std::string> &parsedCmd) {
+
+	std::string colonArg;
+
+	if (str.find(":") != std::string::npos) {
+		colonArg = str.substr(str.find(":") + 1, str.size());
+		str = str.substr(0, str.find(":"));
+	}
+
+	std::stringstream ss(str);
+	std::string tmp;
+
+	while (ss >> tmp)
+		parsedCmd.push_back(tmp);
+	
+	if (colonArg != "")
+		parsedCmd.push_back(colonArg);
+}
+
+void Server::excuteCommands(Client& client)
+{
+	std::deque<std::string>		commands;
+	std::deque<std::string>		parsedCmd;
+	std::string					cmdType;
+
+	parseByChar(client.getBuffer(), '\n', commands);
+
+	for (size_t i = 0; i < commands.size(); i++) {
+
+		parseCommand(commands[i], parsedCmd);
+
+		for(size_t i = 0; i < parsedCmd.size(); i++)
+			std::cout << parsedCmd[i] << std::endl;
+
+		if (parsedCmd.size() == 0)
+			continue ;
+
+		cmdType = parsedCmd[0];
+
+		if (_cmdMap.find(cmdType) == _cmdMap.end() && !client.isRegistered())
+			sendError(421, client);
+		else if (cmdType == "PASS" || client.isRegistered())
+			(this->*_cmdMap[cmdType])(parsedCmd, client);
+		else
+			sendError(451, client);
+
+		parsedCmd.clear();
+	}
+
+	client.clearBuffer();
+}
+
+void Server::sendError(int errNum, Client &client) { 
+	(void) errNum, (void) client;
+	std::cout << "error: invalid command" << std::endl;
+}
+
+void Server::NICK(std::deque<std::string> &parsedCmd, Client &client) {
+
+	client.setNickname(parsedCmd[1]);
+}
+
+void Server::PASS(std::deque<std::string> &parsedCmd, Client &client) {
+
+	(void)parsedCmd;
+	sayHelloToClient(client.getSocket());
+	client.setPassed();
+}
+
+void Server::USER(std::deque<std::string> &parsedCmd, Client &client) {
+
+	client.setUsername(parsedCmd[1]);
+}

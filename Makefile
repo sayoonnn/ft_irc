@@ -5,7 +5,6 @@ SRC		=	main.cpp\
 			Server.cpp\
 			ServerKqueue.cpp\
 			ServerNetwork.cpp\
-			Command.cpp\
 			Client.cpp
 
 
@@ -16,6 +15,7 @@ INC		=	include
 
 CXX			= c++
 CXXFLAGS	= -Wall -Werror -Wextra -std=c++98
+
 
 vpath %.cpp	src
 vpath %.hpp	include
