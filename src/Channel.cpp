@@ -1,49 +1,15 @@
-#include "../include/Channel.hpp"
+#include "Channel.hpp"
 
-//    private
+Channel::Channel(const std::string& name)
+: _name(name), _key(""), _topic(""), _i(false), _t(false), _maxClient(MAX_CLIENTS) {}
 
-Channel::Channel()
+Channel::Channel(const std::string& name, int clientSocket, Client& client)
+: _name(name), _key(""), _topic(""), _i(false), _t(false), _maxClient(MAX_CLIENTS)
 {
+	_operators.insert(std::pair<int, Client*>(clientSocket, &client));
 }
 
-Channel::Channel(const Channel& cha)
-{
-	(void)cha;
-}
-
-Channel&	Channel::operator=(const Channel& cha)
-{
-	(void)cha;
-	return (*this);
-}
-
-//    public
-
-
-Channel::Channel(const std::string& na)
-{
-	name = na;
-	key = "";
-	topic = "";
-	i = false;
-	t = false;
-	max_num_clients = MAX_CLIENTS;
-}
-
-Channel::Channel(const std::string& na, int fd, Client& cli)
-{
-	name = na;
-	key = "";
-	topic = "";
-	i = false;
-	t = false;
-	max_num_clients = MAX_CLIENTS;
-	operators.insert(std::pair<int, Client*>(fd, &cli));
-}
-
-Channel::~Channel()
-{
-}
+Channel::~Channel() {}
 
 //    Users
 
@@ -51,10 +17,10 @@ int	Channel::putUsers(int fd, Client& cli)
 {
 	if (isClientIn(fd) != 0)
 		return (0);
-	if (numClients() >= max_num_clients)
+	if (numClients() >= _maxClient)
 		return (-1);
 	delInvite(fd);
-	users.insert(std::pair<int, Client*>(fd, &cli));
+	_users.insert(std::pair<int, Client*>(fd, &cli));
 	return (1);
 }
 
@@ -67,24 +33,24 @@ int	Channel::delUsers(int fd)
 		case 0:
 			return (0);
 		case 1:
-			iter = users.find(fd);
-			users.erase(iter);
+			iter = _users.find(fd);
+			_users.erase(iter);
 			break;
 		case 2:
-			iter = operators.find(fd);
-			operators.erase(iter);
+			iter = _operators.find(fd);
+			_operators.erase(iter);
 	}
 	return (1);
 }
 
 int	Channel::numUsers() const
 {
-	return (users.size());
+	return (_users.size());
 }
 
 const std::map<int, Client*>&	Channel::getUsers() const
 {
-	return (users);
+	return (_users);
 }
 
 //    Opers
@@ -100,9 +66,9 @@ int	Channel::putOpers(int fd)
 	}
 	std::map<int, Client*>::iterator	iter;
 
-	iter = users.find(fd);
-	operators.insert(std::pair<int, Client*>(fd, iter->second));
-	users.erase(iter);
+	iter = _users.find(fd);
+	_operators.insert(std::pair<int, Client*>(fd, iter->second));
+	_users.erase(iter);
 	return (1);
 }
 
@@ -117,29 +83,29 @@ int	Channel::delOpers(int fd)
 	}
 	std::map<int, Client*>::iterator	iter;
 
-	iter = operators.find(fd);
-	users.insert(std::pair<int, Client*>(fd, iter->second));
-	operators.erase(iter);
+	iter = _operators.find(fd);
+	_users.insert(std::pair<int, Client*>(fd, iter->second));
+	_operators.erase(iter);
 	return (1);
 }
 
 int	Channel::numOpers() const
 {
-	return (operators.size());
+	return (_operators.size());
 }
 
 const std::map<int, Client*>&	Channel::getOpers() const
 {
-	return (operators);
+	return (_operators);
 }
 
 //    Clients
 
 int	Channel::isClientIn(int fd) const
 {
-	if (users.find(fd) != users.end())
+	if (_users.find(fd) != _users.end())
 		return (1);
-	if (operators.find(fd) != operators.end())
+	if (_operators.find(fd) != _operators.end())
 		return (2);
 	return (0);
 }
@@ -153,12 +119,12 @@ int	Channel::numClients() const
 
 void	Channel::setKey(const std::string& k)
 {
-	key = k;
+	_key = k;
 }
 
 std::string	Channel::getKey() const
 {
-	return (key);
+	return (_key);
 }
 
 //    Topic
@@ -166,33 +132,33 @@ std::string	Channel::getKey() const
 void	Channel::setTopic(const std::string& to)
 {
 	if (to.size() > TOPIC_SIZE)
-		topic = to.substr(0, TOPIC_SIZE);
+		_topic = to.substr(0, TOPIC_SIZE);
 	else
-		topic = to;
+		_topic = to;
 }
 
 std::string	Channel::getTopic() const
 {
-	return (topic);
+	return (_topic);
 }
 
 //    MaxNumClients
 
 int	Channel::getMaxNumClients() const
 {
-	return (max_num_clients);
+	return (_maxClient);
 }
 
 void	Channel::setMaxNumClients(int l)
 {
-	max_num_clients = l;
+	_maxClient = l;
 }
 
 //    T
 
 bool	Channel::getT() const
 {
-	return (t);
+	return (_t);
 }
 
 int	Channel::changeT(const char ch)
@@ -205,9 +171,9 @@ int	Channel::changeT(const char ch)
 		ok = true;
 	else
 		return (-1);
-	if (ok == t)
+	if (ok == _t)
 		return (0);
-	t = ok;
+	_t = ok;
 	return (1);
 }
 
@@ -215,7 +181,7 @@ int	Channel::changeT(const char ch)
 
 bool	Channel::getI() const
 {
-	return (i);
+	return (_i);
 }
 
 int	Channel::changeI(const char ch)
@@ -228,9 +194,9 @@ int	Channel::changeI(const char ch)
 		ok = true;
 	else
 		return (-1);
-	if (ok == i)
+	if (ok == _i)
 		return (0);
-	i = ok;
+	_i = ok;
 	return (1);
 }
 
@@ -240,7 +206,7 @@ int	Channel::delInvite(int fd)
 {
 	if (isInvite(fd) == 0)
 		return (0);
-	invite.erase(invite.find(fd));
+	_invite.erase(_invite.find(fd));
 	return (1);
 }
 
@@ -248,21 +214,20 @@ int	Channel::putInvite(int fd, Client& cli)
 {
 	if (isClientIn(fd) != 0)
 		return (0);
-	invite.insert(std::pair<int, Client*>(fd, &cli));
+	_invite.insert(std::pair<int, Client*>(fd, &cli));
 	return (1);
 }
 
 int	Channel::isInvite(int fd) const
 {
-	if (invite.find(fd) != invite.end())
+	if (_invite.find(fd) != _invite.end())
 		return (1);
 	return (0);
 }
 
 //    name
 
-
 std::string	Channel::getName() const
 {
-	return (name);
+	return (_name);
 }

@@ -17,10 +17,6 @@ Server::~Server() {
 	printServerLog("closed");
 }
 
-Server::Server(__attribute__((unused)) const Server& copy) {}
-
-Server &Server::operator=(__attribute__((unused)) const Server& copy) { return (*this); }
-
 void Server::runServer() {
 	
 	printServerLog("started");

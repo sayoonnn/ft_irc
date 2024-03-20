@@ -54,7 +54,6 @@ void Server::removeClient(int clientSocket) {
 
 }
 
-
 int Server::recvMessageFromClient(int clientSocket) {
 
 	int length;

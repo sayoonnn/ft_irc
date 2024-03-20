@@ -4,29 +4,30 @@
 #include <iostream>
 #include <map>
 
-#define TOPIC_SIZE 10
-#define MAX_CLIENTS 3
+#define TOPIC_SIZE 100
+#define MAX_CLIENTS 50
 
-class Client {};
+class Client;
 
 class Channel
 {
 	private:
-		std::string					key;
-		std::string					name;
-		std::string					topic;
+		std::string					_key;
+		std::string					_name;
+		std::string					_topic;
 
-		int							max_num_clients;
-		bool						i;
-		bool						t;
+		int							_maxClient;
+		bool						_i;
+		bool						_t;
 
-		std::map<int, Client*>	users;
-		std::map<int, Client*>	invite;
-		std::map<int, Client*>	operators;
+		std::map<int, Client*>		_users;
+		std::map<int, Client*>		_invite;
+		std::map<int, Client*>		_operators;
 
 		Channel();
 		Channel(const Channel& cha);
 		Channel& operator=(const Channel& cha);
+		
 	public:
 		Channel(const std::string& na);
 		Channel(const std::string& na, int fd, Client& cli);
