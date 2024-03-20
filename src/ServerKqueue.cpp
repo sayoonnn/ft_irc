@@ -6,21 +6,15 @@
 void Server::makeKqueueReady() {
 
 	_kqueue = kqueue();
-	if (_kqueue == FAIL) {
-		std::cerr << "error: cannot make kqueue" << std::endl;
-		// 서버 종료 함수
-		std::exit(EXIT_FAILURE);
-	}
+	if (_kqueue == FAIL)
+		closeServer("cannot open kqueue");
 
 	std::memset(&_eventSetting, 0, sizeof(_eventSetting));
 	EV_SET(&_eventSetting, _servSocket, EVFILT_READ, EV_ADD | EV_ENABLE , 0, 0, NULL);
 
 	int ret = kevent(_kqueue, &_eventSetting, 1, NULL, 0, NULL);
-	if (ret == FAIL) {
-		std::cerr << "error: cannot register event on kqueue" << std::endl;
-		// kque, socket닫기
-		std::exit(1);
-	}
+	if (ret == FAIL)
+		closeServer("cannot register event on kqueue");
 }
 
 void Server::addClientKq(int clientSocket) {
@@ -29,11 +23,8 @@ void Server::addClientKq(int clientSocket) {
 	EV_SET(&_eventSetting, clientSocket, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, NULL);
 
 	int ret = kevent(_kqueue, &_eventSetting, 1, NULL, 0, NULL);
-	if (ret == FAIL) {
-		std::cerr << "error: cannot register event on kqueue" << std::endl;
-		// kque, socket닫기
-		std::exit(1);
-	}
+	if (ret == FAIL)
+		closeServer("cannot register event on kqueue");
 }
 
 void Server::removeClientKq(int clientSocket) {
@@ -42,9 +33,6 @@ void Server::removeClientKq(int clientSocket) {
 	EV_SET(&_eventSetting, clientSocket, EVFILT_READ, EV_DISABLE, 0, 0, NULL);
 
 	int ret = kevent(_kqueue, &_eventSetting, 1, NULL, 0, NULL);
-	if (ret == FAIL) {
-		std::cerr << "error: cannot register event on kqueue" << std::endl;
-		// kque, socket닫기
-		std::exit(1);
-	}
+	if (ret == FAIL)
+		closeServer("cannot remove event on kqueue");
 }

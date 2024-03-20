@@ -3,12 +3,14 @@
 #include "Client.hpp"
 #include "Types.hpp"
 
-Server::Server(char *port, char *password): _password(password) {
+Server::Server(char *port, char *password)
+: _servSocket(-1), _password(password), _kqueue(-1)
+{
 	printServerLog("setup");
 	openServerSocket(port);
 	makeKqueueReady();
 	makeCmdMap();
-	saveMOTD();
+	loadMOTD();
 }
 
 Server::~Server() {
@@ -26,11 +28,8 @@ void Server::runServer() {
 	int eventCnt;
 	
 	eventCnt = kevent(_kqueue, NULL, 0, _eventList, EVENT_SIZE, NULL);
-	if (eventCnt == FAIL) {
-		std::cerr << "error: cannot load events" << std::endl;
-		// kque, socket닫기
-		exit(1);
-	}
+	if (eventCnt == FAIL)
+		closeServer("cannot load event!");
 
 	while (true) {
 		eventCnt = kevent(_kqueue, NULL, 0, _eventList, EVENT_SIZE, NULL);
@@ -40,16 +39,8 @@ void Server::runServer() {
 			struct kevent curEvent = _eventList[i];
 			int curSocket = _eventList[i].ident;
 
-			if (curSocket == _servSocket) {	
-				int clientSocket;
-
-				clientSocket = accept(_servSocket, NULL, NULL);
-				printClientLog(curSocket, "connected");
-
-				fcntl(clientSocket, F_SETFL, O_NONBLOCK);
-				addClientKq(clientSocket);
-				_clients[clientSocket] = Client(clientSocket);
-			}
+			if (curSocket == _servSocket)
+				acceptClient();
 			else if (curEvent.filter == EVFILT_READ) {
 				if (recvMessageFromClient(curSocket) == SUCCESS && 
 				_clients[curSocket].isBufferEndNl()) {
@@ -86,27 +77,29 @@ void Server::makeCmdMap() {
 	_cmdMap["USER"] = &Server::USER;
 }
 
-void Server::parseByChar(std::string target, char delimeter, std::deque<std::string> &commands) {
+void Server::closeServer(std::string errMsg) {
 
-	std::stringstream ss(target);
-	std::string tmp;
+	std::cerr << "error: " << errMsg << std::endl;
+	
+	if (_servSocket != -1)
+		close(_servSocket);
+	
+	if (_kqueue != -1)
+		close(_kqueue);
 
-	while (std::getline(ss, tmp, delimeter))
-		commands.push_back(tmp);
+	exit(EXIT_FAILURE);
 }
 
-void Server::saveMOTD() {
+void Server::loadMOTD() {
 
 	std::ifstream tmp("./include/MOTD.txt");
 	std::string buffer;
 
-	if (!tmp.is_open()) {
-		std::cerr << "error: cannot open MOTD file" << std::endl;
-		exit(1);
-	}
+	if (!tmp.is_open())
+		closeServer("cannot open MOTD");
 
 	while (std::getline(tmp, buffer))
-		_MOTD += buffer + "\n";
+		_MOTD.push_back(buffer);
 
 	tmp.close();
 }

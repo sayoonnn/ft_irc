@@ -7,7 +7,9 @@
 #define RPL_CREATED(nickname, datetime)			(":ircserv 003 " + (nickname) + " :This server was created " + (datetime)  + "\r\n")
 #define RPL_MYINFO(nickname)					(":ircserv 004 " + (nickname) + " :ircserv 1.0 aw abeiIklmnoOt\r\n")
 
-#define RPL_MOTD(nickname, MOTD)				(":ircserv 372 " + (nickname) + "\n" + (MOTD) + "\r\n")
+#define RPL_MOTD(nickname, line)				(":ircserv 372 " + (nickname) + " : " + (line) + "\r\n")
+#define RPL_MOTDSTART(nickname)					(":ircserv 375 " + (nickname) + " :- ircserv Message of the day - \r\n")
+#define RPL_ENDOFMOTD(nickname)					(":ircserv 376 " + (nickname) + " : End of MOTD command.\r\n")
 
 
 // errors

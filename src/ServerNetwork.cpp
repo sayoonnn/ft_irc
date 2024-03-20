@@ -9,50 +9,62 @@ void Server::openServerSocket(char *port) {
 	double tmp;
 
 	ss >> tmp;
-	if (ss.fail()) {
-		std::cerr << "error: " << port << ": invalid port number" << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	if (ss.fail())
+		closeServer("invalid port number");
 
 	_servPort = static_cast<int>(tmp);
 
 	_servSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (_servSocket == FAIL) {
-		std::cerr << "error: cannot open socket" << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	if (_servSocket == FAIL)
+		closeServer("cannot open socket");
 
 	_servAddr.sin_family = AF_INET;
 	_servAddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	_servAddr.sin_port = htons(_servPort);
 
-	if (bind(_servSocket, (struct sockaddr *)&_servAddr, sizeof(_servAddr)) == FAIL) {
-		std::cerr << "error: cannot bind socket" << std::endl;
-		close(_servSocket);
-		exit(EXIT_FAILURE);
-	}
+	if (bind(_servSocket, (struct sockaddr *)&_servAddr, sizeof(_servAddr)) == FAIL)
+		closeServer("socket cannot bind");
 
-	if (listen(_servSocket, SOMAXCONN) == FAIL) {
-		std::cerr << "error: socket cannot listen" << std::endl;
-		close(_servSocket);
-		exit(EXIT_FAILURE);
-	}
+	if (listen(_servSocket, SOMAXCONN) == FAIL)
+		closeServer("socket cannot listen");
+}
+
+void Server::acceptClient() {
+
+	int clientSocket;
+
+	clientSocket = accept(_servSocket, NULL, NULL);
+	printClientLog(clientSocket, "connected");
+
+	fcntl(clientSocket, F_SETFL, O_NONBLOCK);
+	addClientKq(clientSocket);
+	_clients[clientSocket] = Client(clientSocket);
 
 }
 
-int Server::recvMessageFromClient(int clientFd) {
+void Server::removeClient(int clientSocket) {
+
+	std::stringstream ss;
+
+	ss << clientSocket;
+	printServerLog("Client " + ss.str() + " disconnected");
+	removeClientKq(clientSocket);
+	_clients.erase(_clients.find(clientSocket));
+	close(clientSocket);
+
+}
+
+
+int Server::recvMessageFromClient(int clientSocket) {
 
 	int length;
 	char buffer[BUFFER_SIZE];
 	std::string tmp;
 
-	length = recv(clientFd, buffer, BUFFER_SIZE - 1, 0);
+	length = recv(clientSocket, buffer, BUFFER_SIZE - 1, 0);
 
 	if (length == -1) {
-		printClientLog(clientFd, "disconnected");
-		removeClientKq(clientFd);
-		_clients.erase(_clients.find(clientFd));
-		close(clientFd);
+		removeClient(clientSocket);
 		return (FAIL);
 	}
 
@@ -62,23 +74,21 @@ int Server::recvMessageFromClient(int clientFd) {
 	while (length == BUFFER_SIZE - 1) {
 		buffer[length] = 0;
 		tmp += buffer;
-		length = recv(clientFd, buffer, BUFFER_SIZE - 1, 0);	
+		length = recv(clientSocket, buffer, BUFFER_SIZE - 1, 0);	
 	}
 
-	_clients[clientFd].addToBuffer(tmp);
+	_clients[clientSocket].addToBuffer(tmp);
 
 	return (SUCCESS);
 }
 
-void Server::sendMessageToClient(int clientFd, std::string message) {
+void Server::sendMessageToClient(int clientSocket, std::string message) {
 	
 	ssize_t n;
 
 	printServerLog(message);
-	n = send(clientFd, message.c_str(), message.size(), 0);
-	if (n < 0) {
-		std::cerr << "error: cannot send" << std::endl;
-		exit(1);
-	}
+	n = send(clientSocket, message.c_str(), message.size(), 0);
+	if (n < 0)
+		closeServer("cannot send message to client");
 }
 

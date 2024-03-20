@@ -66,6 +66,7 @@
 		"__functional_base_03": "cpp",
 		"iomanip": "cpp",
 		"fstream": "cpp",
-		"stack": "cpp"
+		"stack": "cpp",
+		"csignal": "cpp"
 	}
 }

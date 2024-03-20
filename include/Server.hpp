@@ -42,11 +42,13 @@ class Server {
 		struct kevent 		_eventSetting;
 		struct kevent		_eventList[EVENT_SIZE];
 
-		std::string			_MOTD;
+		std::deque<std::string>		_MOTD;
 
 		Server();
 		Server(const Server&);
 		Server &operator=(const Server&);
+
+		void closeServer(std::string errMsg);
 
 		void makeCmdMap();
 		void openServerSocket(char *);
@@ -55,6 +57,8 @@ class Server {
 		void addClientKq(int);
 		void removeClientKq(int);
 
+		void acceptClient();
+		void removeClient(int);
 
 		void sayHelloToClient(Client &);
 		int recvMessageFromClient(int);
@@ -71,7 +75,7 @@ class Server {
 		void NICK(std::deque<std::string>&, Client &);
 		void USER(std::deque<std::string>&, Client &);
 
-		void saveMOTD();
+		void loadMOTD();
 
 		
 	public:

@@ -57,6 +57,10 @@ void Client::clearBuffer() { _buffer.clear(); };
 void Client::addToBuffer(std::string str) { _buffer += str; };
 
 bool Client::isBufferEndNl() {
+
+	if (_buffer.size() == 0)
+		return (false);
+
 	return (_buffer.at(_buffer.size() - 1) == '\n');
 }
 
