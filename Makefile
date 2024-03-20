@@ -8,6 +8,12 @@ SRC		=	main.cpp\
 			ServerCommands.cpp\
 			Client.cpp
 
+INCLUDES	=	Client.hpp\
+				Command.hpp\
+				RPL.hpp\
+				Server.hpp\
+				Types.hpp
+
 OBJDIR	=	.objs
 OBJ		=	$(SRC:%.cpp=$(OBJDIR)/%.o)
 
@@ -22,7 +28,7 @@ vpath %.hpp	include
 all :
 	@make $(NAME)
 
-$(NAME): $(OBJ) 
+$(NAME): $(OBJ) $(INCLUDES)
 	@$(CXX) $(CXXFLAGS) $(OBJ) -o $(NAME)
 	@echo $(NAME) DONE ✅ 
 

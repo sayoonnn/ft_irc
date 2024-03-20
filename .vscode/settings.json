@@ -64,6 +64,8 @@
 		"map": "cpp",
 		"deque": "cpp",
 		"__functional_base_03": "cpp",
-		"iomanip": "cpp"
+		"iomanip": "cpp",
+		"fstream": "cpp",
+		"stack": "cpp"
 	}
 }

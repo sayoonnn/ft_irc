@@ -48,24 +48,22 @@ class Server {
 		Server(const Server&);
 		Server &operator=(const Server&);
 
+		void makeCmdMap();
 		void openServerSocket(char *);
 
 		void makeKqueueReady();
 		void addClientKq(int);
 		void removeClientKq(int);
 
-		void sayHelloToClient(int);
 
+		void sayHelloToClient(Client &);
 		int recvMessageFromClient(int);
 		void sendMessageToClient(int, std::string);
 
 		void printServerLog(std::string);
 		void printClientLog(int, std::string);
 
-		void makeCmdMap();
-
 		void excuteCommands(Client&);
-
 		void parseCommand(std::string, std::deque<std::string>&);
 		void parseByChar(std::string, char, std::deque<std::string>&);
 

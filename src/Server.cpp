@@ -108,4 +108,5 @@ void Server::saveMOTD() {
 	while (std::getline(tmp, buffer))
 		_MOTD += buffer + "\n";
 
+	tmp.close();
 }

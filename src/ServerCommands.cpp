@@ -31,7 +31,7 @@ void Server::excuteCommands(Client& client)
 
 	for (size_t i = 0; i < commands.size(); i++) {
 
-		printClientLog(client.getSocket(), commands[i] + "\n");
+		printClientLog(client.getSocket(), commands[i]);
 		parseCommand(commands[i], parsedCmd);
 
 		if (parsedCmd.size() == 0)
@@ -40,13 +40,13 @@ void Server::excuteCommands(Client& client)
 		cmdType = parsedCmd[0];
 
 		if (_cmdMap.find(cmdType) == _cmdMap.end())
-			sendMessageToClient(client.getSocket(), ERR_UNKNOWNCOMMAND(client.getUsername(), parsedCmd[0]));
+			sendMessageToClient(client.getSocket(), ERR_UNKNOWNCOMMAND(client.getNickname(), parsedCmd[0]));
 		else if (cmdType == "PASS" || client.isRegistered())
 			(this->*_cmdMap[cmdType])(parsedCmd, client);
 		else if ((cmdType == "NICK" || cmdType == "USER") && client.isPassed())
 			(this->*_cmdMap[cmdType])(parsedCmd, client);
 		else
-			sendMessageToClient(client.getSocket(), ERR_NOTREGISTERED(client.getRealname()));
+			sendMessageToClient(client.getSocket(), ERR_NOTREGISTERED(client.getNickname()));
 
 		parsedCmd.clear();
 	}
@@ -54,12 +54,16 @@ void Server::excuteCommands(Client& client)
 	client.clearBuffer();
 }
 
-void Server::sayHelloToClient(int clientFd) {
-	sendMessageToClient(clientFd, RPL_WELCOME(std::string("sayoon")));
-	sendMessageToClient(clientFd, RPL_YOURHOST(std::string("sayoon")));
-	sendMessageToClient(clientFd, RPL_CREATED(std::string("sayoon"), std::string("2020-11-11")));
-	sendMessageToClient(clientFd, RPL_MYINFO(std::string("sayoon")));
-	sendMessageToClient(clientFd, _MOTD);
+void Server::sayHelloToClient(Client &client) {
+	
+	int clientSocket = client.getSocket();
+	std::string nickname = client.getNickname();
+
+	sendMessageToClient(clientSocket, RPL_WELCOME(nickname));
+	sendMessageToClient(clientSocket, RPL_YOURHOST(nickname));
+	sendMessageToClient(clientSocket, RPL_CREATED(nickname, std::string("2024-03-31")));
+	sendMessageToClient(clientSocket, RPL_MYINFO(nickname));
+	sendMessageToClient(clientSocket, RPL_MOTD(nickname, _MOTD));
 }
 
 
@@ -90,7 +94,7 @@ void Server::NICK(std::deque<std::string> &parsedCmd, Client &client) {
 
 	if (client.isPassed() && client.getUsername() != "") {
 		client.setRegistered();
-		sayHelloToClient(client.getSocket());
+		sayHelloToClient(client);
 	}
 }
 
@@ -131,7 +135,7 @@ void Server::USER(std::deque<std::string> &parsedCmd, Client &client) {
 
 	if (client.isPassed() && client.getNickname() != "") {
 		client.setRegistered();
-		sayHelloToClient(client.getSocket());
+		sayHelloToClient(client);
 	}
 }
 
