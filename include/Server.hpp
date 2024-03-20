@@ -11,6 +11,8 @@
 #include <errno.h>
 
 #include <iostream>
+#include <fstream>
+#include <iomanip>
 #include <string>
 #include <sstream>
 #include <iostream>
@@ -31,7 +33,6 @@ class Server {
 		std::map<int, Client> _clients;
 		std::map<std::string, commandFunc> _cmdMap;
 
-
 		int 				_servSocket;
 		int 				_servPort;
 		struct sockaddr_in	_servAddr;
@@ -41,7 +42,7 @@ class Server {
 		struct kevent 		_eventSetting;
 		struct kevent		_eventList[EVENT_SIZE];
 
-		std::string			_serverBuffer;
+		std::string			_MOTD;
 
 		Server();
 		Server(const Server&);
@@ -58,7 +59,8 @@ class Server {
 		int recvMessageFromClient(int);
 		void sendMessageToClient(int, std::string);
 
-		void printLog(std::string logMsg);
+		void printServerLog(std::string);
+		void printClientLog(int, std::string);
 
 		void makeCmdMap();
 
@@ -70,6 +72,8 @@ class Server {
 		void PASS(std::deque<std::string>&, Client &);
 		void NICK(std::deque<std::string>&, Client &);
 		void USER(std::deque<std::string>&, Client &);
+
+		void saveMOTD();
 
 		
 	public:

@@ -49,7 +49,7 @@ int Server::recvMessageFromClient(int clientFd) {
 	length = recv(clientFd, buffer, BUFFER_SIZE - 1, 0);
 
 	if (length == -1) {
-		std::cout << "[Client " << clientFd << "]: disconnected" << "\n";
+		printClientLog(clientFd, "disconnected");
 		removeClientKq(clientFd);
 		_clients.erase(_clients.find(clientFd));
 		close(clientFd);
@@ -74,6 +74,7 @@ void Server::sendMessageToClient(int clientFd, std::string message) {
 	
 	ssize_t n;
 
+	printServerLog(message);
 	n = send(clientFd, message.c_str(), message.size(), 0);
 	if (n < 0) {
 		std::cerr << "error: cannot send" << std::endl;
@@ -81,9 +82,3 @@ void Server::sendMessageToClient(int clientFd, std::string message) {
 	}
 }
 
-void Server::sayHelloToClient(int clientFd) {
-	sendMessageToClient(clientFd, RPL_WELCOME(std::string("sayoon")));
-	sendMessageToClient(clientFd, RPL_YOURHOST(std::string("sayoon")));
-	sendMessageToClient(clientFd, RPL_CREATED(std::string("sayoon"), std::string("2020-11-11")));
-	sendMessageToClient(clientFd, RPL_MYINFO(std::string("sayoon")));
-}

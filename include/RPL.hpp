@@ -10,6 +10,7 @@
 
 // errors
 #define ERR_UNKNOWNCOMMAND(nickname, command)	(":ircserv 421 " + (nickname) + " " + (command) + " :Unknown command\r\n")
+#define ERR_ERRONEUSNICKNAME(nickname, newname)	(":ircserv 432 " + (nickname) + " " + (newname) + " :Erroneus nickname\r\n")
 #define ERR_NICKNAMEINUSE(realname, nickname)	(":ircserv 433 " + (realname) + " " + (nickname) + " :Nickname is already in use\r\n")
 #define ERR_NOTREGISTERED(realname)				(":ircserv 451 " + (realname) + " :You have not registered\r\n")
 #define ERR_NEEDMOREPARAMS(nickname, command)	(":ircserv 461 " + (nickname) + " " + (command) + " :Not enough parameters\r\n")
