@@ -11,6 +11,8 @@
 #include <errno.h>
 
 #include <iostream>
+#include <fstream>
+#include <iomanip>
 #include <string>
 #include <sstream>
 #include <iostream>
@@ -31,7 +33,6 @@ class Server {
 		std::map<int, Client> _clients;
 		std::map<std::string, commandFunc> _cmdMap;
 
-
 		int 				_servSocket;
 		int 				_servPort;
 		struct sockaddr_in	_servAddr;
@@ -41,31 +42,32 @@ class Server {
 		struct kevent 		_eventSetting;
 		struct kevent		_eventList[EVENT_SIZE];
 
-		std::string			_serverBuffer;
+		std::deque<std::string>		_MOTD;
 
 		Server();
 		Server(const Server&);
 		Server &operator=(const Server&);
 
+		void closeServer(std::string errMsg);
+
+		void makeCmdMap();
 		void openServerSocket(char *);
 
 		void makeKqueueReady();
 		void addClientKq(int);
 		void removeClientKq(int);
 
-		void sayHelloToClient(int);
+		void acceptClient();
+		void removeClient(int);
 
-		int recvNAddToBuffer(int);
+		void sayHelloToClient(Client &);
+		int recvMessageFromClient(int);
 		void sendMessageToClient(int, std::string);
 
-		void printLog(std::string logMsg);
-
-
-		void makeCmdMap();
-
+		void printServerLog(std::string);
+		void printClientLog(int, std::string);
 
 		void excuteCommands(Client&);
-
 		void parseCommand(std::string, std::deque<std::string>&);
 		void parseByChar(std::string, char, std::deque<std::string>&);
 
@@ -73,7 +75,8 @@ class Server {
 		void NICK(std::deque<std::string>&, Client &);
 		void USER(std::deque<std::string>&, Client &);
 
-		void sendError(int, Client &);
+		void loadMOTD();
+
 		
 	public:
 		Server(char *, char *);

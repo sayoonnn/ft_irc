@@ -2,17 +2,19 @@
 #include "Server.hpp"
 #include "Client.hpp"
 #include "Types.hpp"
-#include "RPL.hpp"
 
-Server::Server(char *port, char *password): _password(password) {
-	printLog("setup");
+Server::Server(char *port, char *password)
+: _servSocket(-1), _password(password), _kqueue(-1)
+{
+	printServerLog("setup");
 	openServerSocket(port);
 	makeKqueueReady();
 	makeCmdMap();
+	loadMOTD();
 }
 
 Server::~Server() {
-	printLog("closed");
+	printServerLog("closed");
 }
 
 Server::Server(__attribute__((unused)) const Server& copy) {}
@@ -21,16 +23,13 @@ Server &Server::operator=(__attribute__((unused)) const Server& copy) { return (
 
 void Server::runServer() {
 	
-	printLog("started");
+	printServerLog("started");
 	
 	int eventCnt;
 	
 	eventCnt = kevent(_kqueue, NULL, 0, _eventList, EVENT_SIZE, NULL);
-	if (eventCnt == FAIL) {
-		std::cerr << "error: cannot load events" << std::endl;
-		// kque, socket닫기
-		exit(1);
-	}
+	if (eventCnt == FAIL)
+		closeServer("cannot load event!");
 
 	while (true) {
 		eventCnt = kevent(_kqueue, NULL, 0, _eventList, EVENT_SIZE, NULL);
@@ -40,20 +39,11 @@ void Server::runServer() {
 			struct kevent curEvent = _eventList[i];
 			int curSocket = _eventList[i].ident;
 
-			if (curSocket == _servSocket) {	
-				int clientSocket;
-
-				clientSocket = accept(_servSocket, NULL, NULL);
-				std::cout << "[Client " << clientSocket << "]: connected" << "\n";
-
-				fcntl(clientSocket, F_SETFL, O_NONBLOCK);
-				addClientKq(clientSocket);
-				_clients[clientSocket] = Client(clientSocket);
-			}
+			if (curSocket == _servSocket)
+				acceptClient();
 			else if (curEvent.filter == EVFILT_READ) {
-				if (recvNAddToBuffer(curSocket) == SUCCESS && 
+				if (recvMessageFromClient(curSocket) == SUCCESS && 
 				_clients[curSocket].isBufferEndNl()) {
-					std::cout << _clients[curSocket].getBuffer();
 					excuteCommands(_clients[curSocket]);
 					_clients[curSocket].clearBuffer();
 				}
@@ -62,8 +52,22 @@ void Server::runServer() {
 	}
 }
 
-void Server::printLog(std::string logMsg) {
-	std::cout << "[SERVER] " << logMsg << "\n";
+void Server::printServerLog(std::string logMsg) {
+	std::cout << BLUE << std::right << std::setw(15) << "SERVER | ";
+	std::cout << logMsg << "\n" << RESET;
+}
+
+void Server::printClientLog(int clientNum, std::string logMsg) {
+
+	std::string client;
+	std::stringstream ss;
+
+	ss << clientNum;
+
+	client = "Client " + ss.str() + " | ";
+
+	std::cout << std::right << std::setw(15) << client;
+	std::cout << logMsg << "\n";
 }
 
 
@@ -73,85 +77,29 @@ void Server::makeCmdMap() {
 	_cmdMap["USER"] = &Server::USER;
 }
 
-void Server::parseByChar(std::string target, char delimeter, std::deque<std::string> &commands) {
+void Server::closeServer(std::string errMsg) {
 
-	std::stringstream ss(target);
-	std::string tmp;
-
-	while (std::getline(ss, tmp, delimeter))
-		commands.push_back(tmp);
-}
-
-void  Server::parseCommand(std::string str, std::deque<std::string> &parsedCmd) {
-
-	std::string colonArg;
-
-	if (str.find(":") != std::string::npos) {
-		colonArg = str.substr(str.find(":") + 1, str.size());
-		str = str.substr(0, str.find(":"));
-	}
-
-	std::stringstream ss(str);
-	std::string tmp;
-
-	while (ss >> tmp)
-		parsedCmd.push_back(tmp);
+	std::cerr << "error: " << errMsg << std::endl;
 	
-	if (colonArg != "")
-		parsedCmd.push_back(colonArg);
+	if (_servSocket != -1)
+		close(_servSocket);
+	
+	if (_kqueue != -1)
+		close(_kqueue);
+
+	exit(EXIT_FAILURE);
 }
 
-void Server::excuteCommands(Client& client)
-{
-	std::deque<std::string>		commands;
-	std::deque<std::string>		parsedCmd;
-	std::string					cmdType;
+void Server::loadMOTD() {
 
-	parseByChar(client.getBuffer(), '\n', commands);
+	std::ifstream tmp("./include/MOTD.txt");
+	std::string buffer;
 
-	for (size_t i = 0; i < commands.size(); i++) {
+	if (!tmp.is_open())
+		closeServer("cannot open MOTD");
 
-		parseCommand(commands[i], parsedCmd);
+	while (std::getline(tmp, buffer))
+		_MOTD.push_back(buffer);
 
-		for(size_t i = 0; i < parsedCmd.size(); i++)
-			std::cout << parsedCmd[i] << std::endl;
-
-		if (parsedCmd.size() == 0)
-			continue ;
-
-		cmdType = parsedCmd[0];
-
-		if (_cmdMap.find(cmdType) == _cmdMap.end() && !client.isRegistered())
-			sendError(421, client);
-		else if (cmdType == "PASS" || client.isRegistered())
-			(this->*_cmdMap[cmdType])(parsedCmd, client);
-		else
-			sendError(451, client);
-
-		parsedCmd.clear();
-	}
-
-	client.clearBuffer();
-}
-
-void Server::sendError(int errNum, Client &client) { 
-	(void) errNum, (void) client;
-	std::cout << "error: invalid command" << std::endl;
-}
-
-void Server::NICK(std::deque<std::string> &parsedCmd, Client &client) {
-
-	client.setNickname(parsedCmd[1]);
-}
-
-void Server::PASS(std::deque<std::string> &parsedCmd, Client &client) {
-
-	(void)parsedCmd;
-	sayHelloToClient(client.getSocket());
-	client.setPassed();
-}
-
-void Server::USER(std::deque<std::string> &parsedCmd, Client &client) {
-
-	client.setUsername(parsedCmd[1]);
+	tmp.close();
 }
