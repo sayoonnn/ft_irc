@@ -1,17 +1,25 @@
 
-NAME	=	ircserv
+NAME		=	ircserv
 
-SRC		=	main.cpp\
-			Server.cpp\
-			ServerKqueue.cpp\
-			ServerNetwork.cpp\
-			Client.cpp
+SRC			=	main.cpp\
+				Server.cpp\
+				ServerKqueue.cpp\
+				ServerNetwork.cpp\
+				ServerCommands.cpp\
+				Client.cpp
 
+INCLUDES	=	Client.hpp\
+				Command.hpp\
+				RPL.hpp\
+				Server.hpp\
+				Types.hpp
 
-OBJDIR	=	.objs
-OBJ		=	$(SRC:%.cpp=$(OBJDIR)/%.o)
+OBJDIR		=	.objs
+OBJ			=	$(SRC:%.cpp=$(OBJDIR)/%.o)
 
-INC		=	include
+DEPS		=	$(SRC:%.cpp=$(OBJDIR)/%.d)
+
+INC			=	include
 
 CXX			= c++
 CXXFLAGS	= -Wall -Werror -Wextra -std=c++98
@@ -19,18 +27,27 @@ CXXFLAGS	= -Wall -Werror -Wextra -std=c++98
 vpath %.cpp	src
 vpath %.hpp	include
 
-all :
-	@make $(NAME)
+UP			=	\033[A
+CUT			=	\033[K
+YELLOW		=	\033[1;33m
+RESET		=	\033[0m
 
-$(NAME): $(OBJ) 
+all:
+	@make $(NAME) -j4
+
+$(NAME): $(OBJ)
 	@$(CXX) $(CXXFLAGS) $(OBJ) -o $(NAME)
-	@echo $(NAME) DONE ✅ 
-
-$(OBJDIR)/%.o: %.cpp | $(OBJDIR)
-	@$(CXX) $(CXXFLAGS) -I $(INC) -c $< -o $@
+	@echo $(NAME) DONE ✅
 
 $(OBJDIR):
 	@mkdir $(OBJDIR)
+
+-include $(DEPS)
+
+$(OBJDIR)/%.o: %.cpp | $(OBJDIR)
+	@echo "$(YELLOW)compiling [$@]... $(RESET)"
+	@$(CXX) $(CXXFLAGS) -MMD -MP -I $(INC) -c $< -o $@
+	@printf "$(UP)$(CUT)"
 
 clean:
 	@rm -rf $(OBJDIR)

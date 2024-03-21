@@ -1,7 +1,7 @@
 
 #include "Client.hpp"
 
-Client::Client(): _socket(-1), _nickname(""), _username(""), _realname("") {}
+Client::Client(): _socket(-1), _nickname(""), _username(""), _realname(""), _isPassed(false), _isRegistered(false) {}
 
 Client::Client(int socket): _socket(socket) {}
 
@@ -33,6 +33,10 @@ std::string Client::getRealname() const { return (_realname); }
 
 std::string Client::getBuffer() const { return (_buffer); }
 
+bool Client::isPassed() const { return (_isPassed); }
+
+
+
 void Client::setSocket(int socket) { _socket = socket; }
 
 void Client::setNickname(std::string nickname) { _nickname = nickname; }
@@ -43,10 +47,23 @@ void Client::setRealname(std::string realname) { _realname = realname; }
 
 void Client::setBuffer(std::string string) { _buffer = string; }
 
+void Client::setPassed() { _isPassed = true; }
+
+void Client::setRegistered() { _isRegistered = true; }
+
+
 void Client::clearBuffer() { _buffer.clear(); };
 
 void Client::addToBuffer(std::string str) { _buffer += str; };
 
 bool Client::isBufferEndNl() {
+
+	if (_buffer.size() == 0)
+		return (false);
+
 	return (_buffer.at(_buffer.size() - 1) == '\n');
+}
+
+bool Client::isRegistered() {
+	return (_isRegistered);
 }

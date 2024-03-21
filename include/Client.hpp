@@ -4,6 +4,8 @@
 #include "Channel.hpp"
 #include <map>
 #include <string>
+#include <map>
+#include "Channel.hpp"
 
 class Client {
 
@@ -14,8 +16,13 @@ class Client {
 		std::string _realname;
 		std::map<std::string channel_name, Channel c> _channels;
 
+		bool _isPassed;
+		bool _isRegistered;
+
 		std::string _buffer;
 
+		std::map<std::string, Channel *> _invited;
+		std::map<std::string, Channel *> _joined;
 
 	public:
 		Client();
@@ -29,15 +36,20 @@ class Client {
 		std::string getUsername() const;
 		std::string getRealname() const;
 		std::string getBuffer() const;
+		bool isPassed() const;
 
 		void setSocket(int);
 		void setNickname(std::string);
 		void setUsername(std::string);
 		void setRealname(std::string);
 		void setBuffer(std::string);
+		void setPassed();
+		void setRegistered();
 
 		void clearBuffer();
 		void addToBuffer(std::string);
 		bool isBufferEndNl();
+		
+		bool isRegistered();
 
 };

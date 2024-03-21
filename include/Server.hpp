@@ -7,14 +7,21 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
+
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <string>
 #include <sstream>
 #include <iostream>
 #include <vector>
 #include <map>
-#include <fcntl.h>
-#include <errno.h>
+#include <deque>
 
 #include "Client.hpp"
+#include "Channel.hpp"
 
 #define EVENT_SIZE 64
 #define BUFFER_SIZE 1024
@@ -22,8 +29,12 @@
 class Server {
 
 	private:
+		std::map<int, Client *> _clients;
+		std::map<std::string, Client *> _clientsNick;
+		std::map<std::string, Channel *> _channels;
 
-		std::map<int, Client> _clients;
+		typedef	void (Server::*commandFunc)(std::deque<std::string>&, Client &);
+		std::map<std::string, commandFunc> _cmdMap;
 
 		int 				_servSocket;
 		int 				_servPort;
@@ -34,32 +45,53 @@ class Server {
 		struct kevent 		_eventSetting;
 		struct kevent		_eventList[EVENT_SIZE];
 
-		std::string			_serverBuffer;
+		std::deque<std::string>		_MOTD;
 
 		Server();
 		Server(const Server&);
 		Server &operator=(const Server&);
 
+		void closeServer(std::string errMsg);
+
+		void makeCmdMap();
 		void openServerSocket(char *);
 
 		void makeKqueueReady();
 		void addClientKq(int);
 		void removeClientKq(int);
 
-		void sayHelloToClient(int);
+		void acceptClient();
+		void removeClient(int);
 
-		int recvNAddToBuffer(int);
+		void sayHelloToClient(Client &);
+		int recvMessageFromClient(int);
 		void sendMessageToClient(int, std::string);
 
-		void printLog(std::string logMsg);
+		void printServerLog(std::string);
+		void printClientLog(int, std::string);
 
-		std::vector<std::string> *parseCommand(std::string);
+		void excuteCommands(Client&);
+		void parseCommand(std::string, std::deque<std::string>&);
+		void parseByChar(std::string, char, std::deque<std::string>&);
 
-		void checkExecCmd(std::string);
+		bool checkCmdArgs(std::deque<std::string>&);
 
-		void cmdNICK(Client &);
-		void cmdPASS(Client &);
-		void cmdUSER(Client &);
+		void PASS(std::deque<std::string>&, Client &);
+		void NICK(std::deque<std::string>&, Client &);
+		void USER(std::deque<std::string>&, Client &);
+		void PING(std::deque<std::string>&, Client &);
+		void QUIT(std::deque<std::string>&, Client &);
+	
+		void JOIN(std::deque<std::string>&, Client &);
+		void WHO(std::deque<std::string>&, Client &);
+		void MODE(std::deque<std::string>&, Client &);
+		void INVITE(std::deque<std::string>&, Client &);
+		void KICK(std::deque<std::string>&, Client &);
+		void TOPIC(std::deque<std::string>&, Client &);
+		void PRIVMSG(std::deque<std::string>&, Client &);
+		void PART(std::deque<std::string>&, Client &);
+
+		void loadMOTD();
 		
 	public:
 		Server(char *, char *);
