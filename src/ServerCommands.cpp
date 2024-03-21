@@ -21,7 +21,7 @@ void  Server::parseCommand(std::string str, std::deque<std::string> &parsedCmd) 
 		parsedCmd.push_back(colonArg);
 }
 
-bool checkCmdArgs(std::deque<std::string> &parsedCmd) {
+bool Server::checkCmdArgs(std::deque<std::string> &parsedCmd) {
 
 	std::string cmdType = parsedCmd[0];
 	size_t argsNeed = 0;
@@ -179,11 +179,16 @@ void Server::USER(std::deque<std::string> &parsedCmd, Client &client) {
 }
 
 void Server::PING(std::deque<std::string> &parsedCmd, Client &client) {
-
+	sendMessageToClient(client.getSocket(), ":ircserv PONG " + parsedCmd[1] + "\n");
 }
 
-void Server::PONG(std::deque<std::string> &parsedCmd, Client &client) {
-
-}
-
+void Server::QUIT(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }
+void Server::JOIN(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }
+void Server::WHO(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }
+void Server::MODE(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }
+void Server::INVITE(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }
+void Server::KICK(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }
+void Server::TOPIC(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }
+void Server::PART(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }
+void Server::PRIVMSG(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }
 

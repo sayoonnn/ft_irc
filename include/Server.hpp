@@ -80,7 +80,6 @@ class Server {
 		void NICK(std::deque<std::string>&, Client &);
 		void USER(std::deque<std::string>&, Client &);
 		void PING(std::deque<std::string>&, Client &);
-		void PONG(std::deque<std::string>&, Client &);
 		void QUIT(std::deque<std::string>&, Client &);
 	
 		void JOIN(std::deque<std::string>&, Client &);
@@ -89,14 +88,10 @@ class Server {
 		void INVITE(std::deque<std::string>&, Client &);
 		void KICK(std::deque<std::string>&, Client &);
 		void TOPIC(std::deque<std::string>&, Client &);
-		void PART(std::deque<std::string>&, Client &);
 		void PRIVMSG(std::deque<std::string>&, Client &);
 		void PART(std::deque<std::string>&, Client &);
 
-
-
 		void loadMOTD();
-
 		
 	public:
 		Server(char *, char *);

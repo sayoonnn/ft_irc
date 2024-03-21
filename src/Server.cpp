@@ -76,18 +76,17 @@ void Server::makeCmdMap() {
 	_cmdMap["PASS"] = &Server::PASS;
 	_cmdMap["NICK"] = &Server::NICK;
 	_cmdMap["USER"] = &Server::USER;
-	_cmdMap["PING"] = &Server::USER;
-	_cmdMap["PONG"] = &Server::USER;
-	_cmdMap["QUIT"] = &Server::USER;
-	_cmdMap["JOIN"] = &Server::USER;
-	_cmdMap["WHO"] = &Server::USER;
-	_cmdMap["MODE"] = &Server::USER;
-	_cmdMap["INVITE"] = &Server::USER;
-	_cmdMap["KICK"] = &Server::USER;
-	_cmdMap["TOPIC"] = &Server::USER;
-	_cmdMap["PART"] = &Server::USER;
-	_cmdMap["PRIVMSG"] = &Server::USER;
-	_cmdMap["PART"] = &Server::USER;
+	_cmdMap["PING"] = &Server::PING;
+	_cmdMap["QUIT"] = &Server::QUIT;
+	_cmdMap["JOIN"] = &Server::JOIN;
+	_cmdMap["WHO"] = &Server::WHO;
+	_cmdMap["MODE"] = &Server::MODE;
+	_cmdMap["INVITE"] = &Server::INVITE;
+	_cmdMap["KICK"] = &Server::KICK;
+	_cmdMap["TOPIC"] = &Server::TOPIC;
+	_cmdMap["PART"] = &Server::PART;
+	_cmdMap["PRIVMSG"] = &Server::PRIVMSG;
+	_cmdMap["PART"] = &Server::PART;
 
 }
 
