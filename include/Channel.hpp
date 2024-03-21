@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <map>
+#include "Client.hpp"
 
 #define TOPIC_SIZE 100
 #define MAX_CLIENTS 50

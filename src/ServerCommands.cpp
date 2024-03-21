@@ -21,6 +21,24 @@ void  Server::parseCommand(std::string str, std::deque<std::string> &parsedCmd) 
 		parsedCmd.push_back(colonArg);
 }
 
+bool checkCmdArgs(std::deque<std::string> &parsedCmd) {
+
+	std::string cmdType = parsedCmd[0];
+	size_t argsNeed = 0;
+	
+	if (cmdType == "QUIT" || cmdType == "MODE" || cmdType == "PONG")
+		argsNeed = 1;
+	else if (cmdType == "PASS" || cmdType == "NICK" || cmdType == "PART" || cmdType == "JOIN" || cmdType == "PRIVMSG" || cmdType == "TOPIC" || cmdType == "PING" || cmdType == "PART")
+		argsNeed = 2;
+	else if (cmdType == "KICK" || cmdType == "INVITE")
+		argsNeed = 3;
+	else if (cmdType == "USER")
+		argsNeed = 5;
+
+	return (parsedCmd.size() == argsNeed);
+
+}
+
 void Server::parseByChar(std::string target, char delimeter, std::deque<std::string> &commands) {
 
 	std::stringstream ss(target);
@@ -48,14 +66,23 @@ void Server::excuteCommands(Client& client)
 
 		cmdType = parsedCmd[0];
 
-		if (cmdType == "PASS" || client.isRegistered())
-			(this->*_cmdMap[cmdType])(parsedCmd, client);
-		else if ((cmdType == "NICK" || cmdType == "USER") && client.isPassed())
-			(this->*_cmdMap[cmdType])(parsedCmd, client);
-		else if (_cmdMap.find(cmdType) == _cmdMap.end() && client.isRegistered())
-			sendMessageToClient(client.getSocket(), ERR_UNKNOWNCOMMAND(client.getNickname(), parsedCmd[0]));
-		else if (_cmdMap.find(cmdType) != _cmdMap.end() && !client.isRegistered())
-			sendMessageToClient(client.getSocket(), ERR_NOTREGISTERED(client.getNickname()));
+		if (client.isRegistered()) {
+
+			if (_cmdMap.find(cmdType) == _cmdMap.end())
+				sendMessageToClient(client.getSocket(), ERR_UNKNOWNCOMMAND(client.getNickname(), parsedCmd[0]));
+			else if (checkCmdArgs(parsedCmd))
+				(this->*_cmdMap[cmdType])(parsedCmd, client);
+			else
+				sendMessageToClient(client.getSocket(), ERR_NEEDMOREPARAMS(client.getNickname(), cmdType));
+		}
+		else {
+
+			if (cmdType == "PASS" || ((cmdType == "NICK" || cmdType == "USER") && client.isPassed()))
+				(this->*_cmdMap[cmdType])(parsedCmd, client);
+			else if (_cmdMap.find(cmdType) != _cmdMap.end())
+				sendMessageToClient(client.getSocket(), ERR_NOTREGISTERED(client.getNickname()));
+
+		}
 
 		parsedCmd.clear();
 	}
@@ -70,7 +97,7 @@ void Server::sayHelloToClient(Client &client) {
 
 	sendMessageToClient(clientSocket, RPL_WELCOME(nickname));
 	sendMessageToClient(clientSocket, RPL_YOURHOST(nickname));
-	sendMessageToClient(clientSocket, RPL_CREATED(nickname, std::string("2024-03-31")));
+	sendMessageToClient(clientSocket, RPL_CREATED(nickname, "2024-03-31"));
 	sendMessageToClient(clientSocket, RPL_MYINFO(nickname));
 	
 	sendMessageToClient(clientSocket, RPL_MOTDSTART(nickname));
@@ -87,18 +114,17 @@ void Server::NICK(std::deque<std::string> &parsedCmd, Client &client) {
 		return ;
 	}
 
-	std::map<int, Client>::iterator it = _clients.begin();
+	std::map<int, Client *>::iterator it = _clients.begin();
 
-	for(; it != _clients.end(); it++) {
-		if ((*it).second.getNickname() == parsedCmd[1] && &(*it).second != &client) {
+	for (; it != _clients.end(); it++) {
+		if ((*it).second->getNickname() == parsedCmd[1] && (*it).second != &client) {
 			sendMessageToClient(client.getSocket(), ERR_NICKNAMEINUSE(client.getUsername(), parsedCmd[1]));
 			return ;
 		}
 	}
 
-	if (parsedCmd[1].find(" ") != std::string::npos ||
-	parsedCmd[1].find("&") != std::string::npos ||
-	parsedCmd[1].find("#") != std::string::npos) {
+	if (parsedCmd[1].find(" ") != std::string::npos || parsedCmd[1].find("&") != std::string::npos ||
+	parsedCmd[1].find("#") != std::string::npos || parsedCmd[1].find(",") != std::string::npos) {
 		sendMessageToClient(client.getSocket(), ERR_ERRONEUSNICKNAME(client.getNickname(), parsedCmd[1]));
 		return ;
 	}
@@ -150,6 +176,14 @@ void Server::USER(std::deque<std::string> &parsedCmd, Client &client) {
 		client.setRegistered();
 		sayHelloToClient(client);
 	}
+}
+
+void Server::PING(std::deque<std::string> &parsedCmd, Client &client) {
+
+}
+
+void Server::PONG(std::deque<std::string> &parsedCmd, Client &client) {
+
 }
 
 

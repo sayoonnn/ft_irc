@@ -1,6 +1,5 @@
 
 #include "Server.hpp"
-#include "Client.hpp"
 #include "Types.hpp"
 
 Server::Server(char *port, char *password)
@@ -14,6 +13,12 @@ Server::Server(char *port, char *password)
 }
 
 Server::~Server() {
+
+	std::map<int, Client *>::iterator it = _clients.begin();
+
+	for (; it != _clients.end(); it++)
+		delete (*it).second;
+
 	printServerLog("closed");
 }
 
@@ -38,10 +43,9 @@ void Server::runServer() {
 			if (curSocket == _servSocket)
 				acceptClient();
 			else if (curEvent.filter == EVFILT_READ) {
-				if (recvMessageFromClient(curSocket) == SUCCESS && 
-				_clients[curSocket].isBufferEndNl()) {
-					excuteCommands(_clients[curSocket]);
-					_clients[curSocket].clearBuffer();
+				if (recvMessageFromClient(curSocket) == SUCCESS && _clients[curSocket]->isBufferEndNl()) {
+					excuteCommands(*_clients[curSocket]);
+					_clients[curSocket]->clearBuffer();
 				}
 			}
 		}
@@ -49,7 +53,7 @@ void Server::runServer() {
 }
 
 void Server::printServerLog(std::string logMsg) {
-	std::cout << BLUE << std::right << std::setw(15) << "SERVER | ";
+	std::cout << BLUE << std::right << std::setw(15) << "SERVER ! ";
 	std::cout << logMsg << "\n" << RESET;
 }
 
@@ -68,9 +72,23 @@ void Server::printClientLog(int clientNum, std::string logMsg) {
 
 
 void Server::makeCmdMap() {
+
 	_cmdMap["PASS"] = &Server::PASS;
 	_cmdMap["NICK"] = &Server::NICK;
 	_cmdMap["USER"] = &Server::USER;
+	_cmdMap["PING"] = &Server::USER;
+	_cmdMap["PONG"] = &Server::USER;
+	_cmdMap["QUIT"] = &Server::USER;
+	_cmdMap["JOIN"] = &Server::USER;
+	_cmdMap["WHO"] = &Server::USER;
+	_cmdMap["MODE"] = &Server::USER;
+	_cmdMap["INVITE"] = &Server::USER;
+	_cmdMap["KICK"] = &Server::USER;
+	_cmdMap["TOPIC"] = &Server::USER;
+	_cmdMap["PART"] = &Server::USER;
+	_cmdMap["PRIVMSG"] = &Server::USER;
+	_cmdMap["PART"] = &Server::USER;
+
 }
 
 void Server::closeServer(std::string errMsg) {

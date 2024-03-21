@@ -17,6 +17,8 @@ INCLUDES	=	Client.hpp\
 OBJDIR		=	.objs
 OBJ			=	$(SRC:%.cpp=$(OBJDIR)/%.o)
 
+DEPS		=	$(SRC:%.cpp=$(OBJDIR)/%.d)
+
 INC			=	include
 
 CXX			= c++
@@ -31,19 +33,21 @@ YELLOW		=	\033[1;33m
 RESET		=	\033[0m
 
 all:
-	@make $(NAME)
+	@make $(NAME) -j4
 
 $(NAME): $(OBJ)
 	@$(CXX) $(CXXFLAGS) $(OBJ) -o $(NAME)
 	@echo $(NAME) DONE ✅
 
-$(OBJDIR)/%.o: %.cpp  $(INCLUDES) | $(OBJDIR)
-	@echo "$(YELLOW)compiling [$@]... $(RESET)"
-	@$(CXX) $(CXXFLAGS) -I $(INC) -c $< -o $@
-	@printf "$(UP)$(CUT)"
-
 $(OBJDIR):
 	@mkdir $(OBJDIR)
+
+-include $(DEPS)
+
+$(OBJDIR)/%.o: %.cpp | $(OBJDIR)
+	@echo "$(YELLOW)compiling [$@]... $(RESET)"
+	@$(CXX) $(CXXFLAGS) -MMD -MP -I $(INC) -c $< -o $@
+	@printf "$(UP)$(CUT)"
 
 clean:
 	@rm -rf $(OBJDIR)

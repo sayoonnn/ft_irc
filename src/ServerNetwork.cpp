@@ -38,7 +38,7 @@ void Server::acceptClient() {
 
 	fcntl(clientSocket, F_SETFL, O_NONBLOCK);
 	addClientKq(clientSocket);
-	_clients[clientSocket] = Client(clientSocket);
+	_clients[clientSocket] = new Client(clientSocket);
 
 }
 
@@ -76,7 +76,7 @@ int Server::recvMessageFromClient(int clientSocket) {
 		length = recv(clientSocket, buffer, BUFFER_SIZE - 1, 0);	
 	}
 
-	_clients[clientSocket].addToBuffer(tmp);
+	_clients[clientSocket]->addToBuffer(tmp);
 
 	return (SUCCESS);
 }

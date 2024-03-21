@@ -2,6 +2,8 @@
 #pragma once
 
 #include <string>
+#include <map>
+#include "Channel.hpp"
 
 class Client {
 
@@ -16,6 +18,8 @@ class Client {
 
 		std::string _buffer;
 
+		std::map<std::string, Channel *> _invited;
+		std::map<std::string, Channel *> _joined;
 
 	public:
 		Client();

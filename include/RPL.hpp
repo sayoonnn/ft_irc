@@ -9,7 +9,7 @@
 
 #define RPL_MOTD(nickname, line)				(":ircserv 372 " + (nickname) + " : " + (line) + "\r\n")
 #define RPL_MOTDSTART(nickname)					(":ircserv 375 " + (nickname) + " :- ircserv Message of the day - \r\n")
-#define RPL_ENDOFMOTD(nickname)					(":ircserv 376 " + (nickname) + " : End of MOTD command.\r\n")
+#define RPL_ENDOFMOTD(nickname)					(":ircserv 376 " + (nickname) + " :End of MOTD command.\r\n")
 
 
 // errors
