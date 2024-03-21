@@ -53,6 +53,18 @@ const std::map<int, Client*>&	Channel::getUsers() const
 	return (_users);
 }
 
+std::string	Channel::getUsersList() const
+{
+	std::string	list;
+
+	for (std::map<int, Client*>::const_iterator it = _users.begin(); it != _users.end(); it++) {
+		if (_operators.find(it->first) != _operators.end())
+			list += "@";
+		list += it->second->getNickname() + " ";
+	}
+	return (list);
+}
+
 //    Opers
 
 int	Channel::putOpers(int fd)

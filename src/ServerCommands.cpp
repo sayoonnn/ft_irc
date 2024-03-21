@@ -206,8 +206,13 @@ void Server::JOIN(std::deque<std::string> &parsedCmd, Client &client) {
     // 5. join channel
 	if (_channels[channel_name]->putUsers(client.getSocket(), client) == -1)
 		sendMessageToClient(client.getSocket(), ERR_CHANNELISFULL(client.getNickname(), channel_name));
-	else
-		sendMessageToClient(client.getSocket(), ":ircserv " + client.getNickname() + "!~" + client.getUsername() + "@localhost JOIN :" + channel_name + "\n");
+	else {
+		sendMessageToClient(client.getSocket(), ":" + client.getNickname() + "!~" + client.getUsername() + "@localhost JOIN :" + channel_name + "\n");
+		// 6. send RPL_NAMREPLY
+		sendMessageToClient(client.getSocket(), RPL_NAMREPLY(client.getNickname(), channel_name, _channels[channel_name]->getUsersList()));
+		// 7. send RPL_ENDOFNAMES
+		sendMessageToClient(client.getSocket(), RPL_ENDOFNAMES(client.getNickname(), channel_name));
+	}
 }
 void Server::WHO(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }
 void Server::MODE(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }

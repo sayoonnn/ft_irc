@@ -38,6 +38,7 @@ class Channel
 		int								delUsers(int fd);
 		int								numUsers() const;
 		const std::map<int, Client*>&	getUsers() const;
+		std::string						getUsersList() const;
 
 		int								putOpers(int fd);
 		int								delOpers(int fd);
