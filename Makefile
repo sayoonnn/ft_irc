@@ -30,12 +30,12 @@ CUT			=	\033[K
 YELLOW		=	\033[1;33m
 RESET		=	\033[0m
 
-all :
+all:
 	@make $(NAME)
 
 $(NAME): $(OBJ)
 	@$(CXX) $(CXXFLAGS) $(OBJ) -o $(NAME)
-	@echo $(NAME) DONE ✅ 
+	@echo $(NAME) DONE ✅
 
 $(OBJDIR)/%.o: %.cpp  $(INCLUDES) | $(OBJDIR)
 	@echo "$(YELLOW)compiling [$@]... $(RESET)"
