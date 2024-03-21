@@ -20,3 +20,7 @@
 #define ERR_NEEDMOREPARAMS(nickname, command)	(":ircserv 461 " + (nickname) + " " + (command) + " :Not enough parameters\r\n")
 #define ERR_ALREADYREGISTERED(nickname)			(":ircserv 462 " + (nickname) + " :You may not reregister\r\n")
 #define ERR_PASSWDMISMATCH(nickname)			(":ircserv 464 " + (nickname) + " :Password incorrect\r\n")
+#define ERR_NOSUCHCHANNEL(nickname, channel)	(":ircserv 403 " + (nickname) + " " + (channel) + " :No such channel\r\n")
+#define ERR_TOOMANYCHANNELS(nickname, channel)	(":ircserv 405 " + (nickname) + " " + (channel) + " :You have joined too many channels\r\n")
+#define ERR_BADCHANMASK(channel)		        (":ircserv 476 " + (channel) + " :Bad Channel Mask\r\n")
+#define ERR_CHANNELISFULL(nickname, channel)	(":ircserv 471 " + (nickname) + " " + (channel) + " :Cannot join channel (+l)\r\n")
