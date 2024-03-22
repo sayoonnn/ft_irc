@@ -129,17 +129,29 @@ std::string	Channel::getKey() const
 
 //    Topic
 
-void	Channel::setTopic(const std::string& to)
+void	Channel::setTopic(const std::string& to, const std::string& who)
 {
 	if (to.size() > TOPIC_SIZE)
 		_topic = to.substr(0, TOPIC_SIZE);
 	else
 		_topic = to;
+	_whoTopic = who;
+	_topicTimestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 }
 
 std::string	Channel::getTopic() const
 {
 	return (_topic);
+}
+
+std::string	Channel::getWhoTopic() const
+{
+	return (_whoTopic);
+}
+
+const std::time_t&	Channel::getTimeTopic() const
+{
+	return (_topicTimestamp);
 }
 
 //    MaxNumClients

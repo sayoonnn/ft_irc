@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <map>
+#include <ctime>
+#include <chrono>
 #include "Client.hpp"
 
 #define TOPIC_SIZE 100
@@ -16,6 +18,8 @@ class Channel
 		std::string					_key;
 		std::string					_name;
 		std::string					_topic;
+		std::string					_whoTopic; //new
+		std::time_t					_topicTimestamp; //new
 
 		int							_maxClient;
 		bool						_i;
@@ -50,8 +54,10 @@ class Channel
 		void							setKey(const std::string& k);
 		std::string						getKey() const;
 
-		void							setTopic(const std::string& to);
+		void							setTopic(const std::string& to, const std::string& who); //fix
 		std::string						getTopic() const;
+		std::string						getWhoTopic() const; //new
+		std::time_t&					getTimeTopic() const; //new
 
 		int								getMaxNumClients() const;
 		void							setMaxNumClients(int l);

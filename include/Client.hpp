@@ -1,8 +1,6 @@
 
 #pragma once
 
-#include "Channel.hpp"
-#include <map>
 #include <string>
 #include <map>
 #include "Channel.hpp"
@@ -14,7 +12,6 @@ class Client {
 		std::string _nickname;
 		std::string _username;
 		std::string _realname;
-		std::map<std::string channel_name, Channel c> _channels;
 
 		bool _isPassed;
 		bool _isRegistered;
