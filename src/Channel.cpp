@@ -57,11 +57,10 @@ std::string	Channel::getUsersList() const
 {
 	std::string	list;
 
-	for (std::map<int, Client*>::const_iterator it = _users.begin(); it != _users.end(); it++) {
-		if (_operators.find(it->first) != _operators.end())
-			list += "@";
+	for (std::map<int, Client*>::const_iterator it = _users.begin(); it != _users.end(); it++)
 		list += it->second->getNickname() + " ";
-	}
+	for (std::map<int, Client*>::const_iterator it = _operators.begin(); it != _operators.end(); it++)
+		list += "@" + it->second->getNickname() + " ";
 	return (list);
 }
 

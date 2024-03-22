@@ -26,3 +26,4 @@
 #define ERR_TOOMANYCHANNELS(nickname, channel)	(":ircserv 405 " + (nickname) + " " + (channel) + " :You have joined too many channels\r\n")
 #define ERR_BADCHANMASK(channel)		        (":ircserv 476 " + (channel) + " :Bad Channel Mask\r\n")
 #define ERR_CHANNELISFULL(nickname, channel)	(":ircserv 471 " + (nickname) + " " + (channel) + " :Cannot join channel (+l)\r\n")
+#define ERR_TOOMANYCHANNELS(nickname, channel)	(":ircserv 405 " + (nickname) + " " + (channel) + " :You have joined too many channels\r\n")

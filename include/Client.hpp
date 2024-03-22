@@ -4,6 +4,9 @@
 #include "Channel.hpp"
 #include <map>
 #include <string>
+
+#define MAX_CHANNELS 50
+
 class Channel;
 
 class Client {
@@ -34,6 +37,7 @@ class Client {
 		std::string getNickname() const;
 		std::string getUsername() const;
 		std::string getRealname() const;
+		std::map<std::string, Channel *> getChannels() const;
 		std::string getBuffer() const;
 		bool isPassed() const;
 
