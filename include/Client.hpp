@@ -4,8 +4,7 @@
 #include "Channel.hpp"
 #include <map>
 #include <string>
-#include <map>
-#include "Channel.hpp"
+class Channel;
 
 class Client {
 
@@ -14,7 +13,7 @@ class Client {
 		std::string _nickname;
 		std::string _username;
 		std::string _realname;
-		std::map<std::string channel_name, Channel c> _channels;
+		std::map<std::string, Channel *> _channels;
 
 		bool _isPassed;
 		bool _isRegistered;

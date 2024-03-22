@@ -13,13 +13,13 @@ class Client;
 class Channel
 {
 	private:
-		std::string					_key;
 		std::string					_name;
+		std::string					_key;
 		std::string					_topic;
 
-		int							_maxClient;
 		bool						_i;
 		bool						_t;
+		int							_maxClient;
 
 		std::map<int, Client*>		_users;
 		std::map<int, Client*>		_invite;

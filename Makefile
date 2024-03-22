@@ -1,15 +1,16 @@
 
 NAME		=	ircserv
 
-SRC			=	main.cpp\
+SRC			=	Channel.cpp\
+				Client.cpp\
+				main.cpp\
 				Server.cpp\
-				ServerKqueue.cpp\
-				ServerNetwork.cpp\
 				ServerCommands.cpp\
-				Client.cpp
+				ServerKqueue.cpp\
+				ServerNetwork.cpp
 
-INCLUDES	=	Client.hpp\
-				Command.hpp\
+INCLUDES	=	Channel.hpp\
+				Client.hpp\
 				RPL.hpp\
 				Server.hpp\
 				Types.hpp

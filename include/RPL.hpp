@@ -11,7 +11,7 @@
 #define RPL_MOTDSTART(nickname)					(":ircserv 375 " + (nickname) + " :- ircserv Message of the day - \r\n")
 #define RPL_ENDOFMOTD(nickname)					(":ircserv 376 " + (nickname) + " :End of MOTD command.\r\n")
 #define RPL_NAMREPLY(nickname, channel, users)	(":ircserv 353 " + (nickname) + " = " + (channel) + " :" + (users) + "\r\n")
-#define RPL_ENDOFNAMES(nickname, channel)		(":ircserv 366 " + (nickname) + " " + (channel) + " :End of NAMES list\r\n")
+#define RPL_ENDOFNAMES(nickname, channel)		(":ircserv 366 " + (nickname) + " " + (channel) + " :End of NAMES list.\r\n")
 
 
 // errors
