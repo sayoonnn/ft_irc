@@ -226,7 +226,7 @@ void Server::JOIN(std::deque<std::string> &parsedCmd, Client &client) {
 		}
 	}
 	// 6. join channel
-	sendMessageToClient(client.getSocket(), ":" + client.getNickname() + "!~" + client.getUsername() + "@localhost JOIN :" + channel_name + "\n");
+	sendMessageToClient(client.getSocket(), ":" + client.getNickname() + "!" + client.getUsername() + "@localhost JOIN :" + channel_name + "\n");
 	// 7. send RPL_NAMREPLY
 	sendMessageToClient(client.getSocket(), RPL_NAMREPLY(client.getNickname(), channel_name, _channels[channel_name]->getUsersList()));
 	// 8. send RPL_ENDOFNAMES
@@ -234,7 +234,54 @@ void Server::JOIN(std::deque<std::string> &parsedCmd, Client &client) {
 }
 void Server::WHO(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }
 void Server::MODE(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }
-void Server::INVITE(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }
+void Server::INVITE(std::deque<std::string> &parsedCmd, Client &client) {
+	// param : INVITE nickname #channel
+	if (parsedCmd.size() < 3) {
+		sendMessageToClient(client.getSocket(), ERR_NEEDMOREPARAMS(client.getNickname(), "INVITE"));
+		return ;
+	}
+	// 확인해보니까 여기선 채널명 검증을 안하더라
+	std::string channel_name = parsedCmd[2];
+	// ',' 가 있으면, 쉼표를 제외한 앞부분만 채널명으로 사용
+	if (channel_name.find(",") != std::string::npos)
+		channel_name = channel_name.substr(0, channel_name.find(","));
+	// 1. check if channel exist
+	if (_channels.find(channel_name) == _channels.end()) {
+		sendMessageToClient(client.getSocket(), ERR_NOSUCHCHANNEL(client.getNickname(), channel_name));
+		return ;
+	}
+	// 2. check if client is in channel
+	if (_channels[channel_name]->isClientIn(client.getSocket()) == 0) {
+		sendMessageToClient(client.getSocket(), ERR_NOTONCHANNEL(client.getNickname(), channel_name));
+		return ;
+	}
+	// // 3. check if client is operator
+	// if (_channels[channel_name]->getOpers().find(client.getSocket()) == _channels[channel_name]->getOpers().end()) {
+	// 	sendMessageToClient(client.getSocket(), ERR_CHANOPRIVSNEEDED(client.getNickname(), channel_name));
+	// 	return ;
+	// }
+	std::string nickname = parsedCmd[1];
+	// 4. check if nickname to be invited to channel exists in server
+	std::map<int, Client *>::iterator it = _clients.begin();
+	for (; it != _clients.end(); it++) {
+		if ((*it).second->getNickname() == nickname)
+			break ;
+	}
+	if (it == _clients.end()) {
+		sendMessageToClient(client.getSocket(), ERR_NOSUCHNICK(client.getNickname(), nickname));
+		return ;
+	}
+	Client &nick_client = *(*it).second;
+	// 5. check if nick_client is already in channel and
+	// put nick_client in _invite if nick_client is never invited
+	if (_channels[channel_name]->putInvite(nick_client.getSocket(), nick_client) == 0) {
+		sendMessageToClient(client.getSocket(), ERR_USERONCHANNEL(client.getNickname(), nickname, channel_name));
+		return ;
+	}
+	// 6. invite nickname to channel
+	sendMessageToClient(client.getSocket(), RPL_INVITING(client.getNickname(), nickname, channel_name));
+	sendMessageToClient(client.getSocket(), ":" + client.getNickname() + "!" + client.getUsername() + "@localhost INVITE " + nickname + " :" + channel_name + "\n");
+}
 void Server::KICK(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }
 void Server::TOPIC(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }
 void Server::PART(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }

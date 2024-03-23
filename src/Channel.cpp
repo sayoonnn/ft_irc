@@ -225,6 +225,8 @@ int	Channel::putInvite(int fd, Client& cli)
 {
 	if (isClientIn(fd) != 0)
 		return (0);
+	if (isInvite(fd) != 0)
+		return (-1);
 	_invite.insert(std::pair<int, Client*>(fd, &cli));
 	return (1);
 }
