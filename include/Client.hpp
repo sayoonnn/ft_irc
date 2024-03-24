@@ -38,6 +38,7 @@ class Client {
 		std::string getUsername() const;
 		std::string getRealname() const;
 		std::map<std::string, Channel *> getChannels() const;
+		std::map<std::string, Channel *> getInvited() const;
 		std::string getBuffer() const;
 		bool isPassed() const;
 

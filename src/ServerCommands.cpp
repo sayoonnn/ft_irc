@@ -191,46 +191,47 @@ void Server::JOIN(std::deque<std::string> &parsedCmd, Client &client) {
 		return ;
 	}
     // 0. check if channel name is valid : (ex: #channel)
-    std::string channel_name = parsedCmd[1];
+    std::string channelName = parsedCmd[1];
 	// ',' 가 있으면, 쉼표를 제외한 앞부분만 채널명으로 사용
-	if (channel_name.find(",") != std::string::npos)
-		channel_name = channel_name.substr(0, channel_name.find(","));
+	if (channelName.find(",") != std::string::npos)
+		channelName = channelName.substr(0, channelName.find(","));
 	// 채널명이 #으로 시작하지 않거나, 그 다음이 숫자나 영문자로 이루어지지 않으면 에러
-	if (channel_name[0] != '#') {
-		sendMessageToClient(client.getSocket(), ERR_BADCHANMASK(channel_name));
+	if (channelName[0] != '#') {
+		sendMessageToClient(client.getSocket(), ERR_BADCHANMASK(channelName));
 		return ;
 	}
-	for (size_t i = 1; i < channel_name.size(); i++) {
-		if (!std::isalnum(channel_name[i])) {
-			sendMessageToClient(client.getSocket(), ERR_BADCHANMASK(channel_name));
+	for (size_t i = 1; i < channelName.size(); i++) {
+		if (!std::isalnum(channelName[i])) {
+			sendMessageToClient(client.getSocket(), ERR_BADCHANMASK(channelName));
 			return ;
 		}
 	}
 	// 1. check if client joined too many channels
 	if (client.getChannels().size() >= MAX_CHANNELS) {
-		sendMessageToClient(client.getSocket(), ERR_TOOMANYCHANNELS(client.getNickname(), channel_name));
+		sendMessageToClient(client.getSocket(), ERR_TOOMANYCHANNELS(client.getNickname(), channelName));
 		return ;
 	}
     // 2. check if channel not exist
-	if (_channels.find(channel_name) == _channels.end()) {
-		_channels[channel_name] = new Channel(channel_name, client.getSocket(), client);
+	if (_channels.find(channelName) == _channels.end()) {
+		_channels[channelName] = new Channel(channelName, client.getSocket(), client);
 	} else {
 		// 3. check if channel is invite only
 		// 4. check if channel is moderated
 		// 5. check if channel is +i or +t or +k or +o or +l
-		if (_channels[channel_name]->putUsers(client.getSocket(), client) == 0)
+		if (_channels[channelName]->putUsers(client.getSocket(), client) == 0)
 			return ;
-		if (_channels[channel_name]->putUsers(client.getSocket(), client) == -1) {
-			sendMessageToClient(client.getSocket(), ERR_CHANNELISFULL(client.getNickname(), channel_name));
+		if (_channels[channelName]->putUsers(client.getSocket(), client) == -1) {
+			sendMessageToClient(client.getSocket(), ERR_CHANNELISFULL(client.getNickname(), channelName));
 			return ;
 		}
 	}
 	// 6. join channel
-	sendMessageToClient(client.getSocket(), ":" + client.getNickname() + "!" + client.getUsername() + "@localhost JOIN :" + channel_name + "\n");
+	client.getChannels()[channelName] = _channels[channelName];
+	sendMessageToClient(client.getSocket(), ":" + client.getNickname() + "!" + client.getUsername() + "@localhost JOIN :" + channelName + "\r\n");
 	// 7. send RPL_NAMREPLY
-	sendMessageToClient(client.getSocket(), RPL_NAMREPLY(client.getNickname(), channel_name, _channels[channel_name]->getUsersList()));
+	sendMessageToClient(client.getSocket(), RPL_NAMREPLY(client.getNickname(), channelName, _channels[channelName]->getUsersList()));
 	// 8. send RPL_ENDOFNAMES
-	sendMessageToClient(client.getSocket(), RPL_ENDOFNAMES(client.getNickname(), channel_name));
+	sendMessageToClient(client.getSocket(), RPL_ENDOFNAMES(client.getNickname(), channelName));
 }
 void Server::WHO(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }
 void Server::MODE(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }
@@ -241,23 +242,23 @@ void Server::INVITE(std::deque<std::string> &parsedCmd, Client &client) {
 		return ;
 	}
 	// 확인해보니까 여기선 채널명 검증을 안하더라
-	std::string channel_name = parsedCmd[2];
+	std::string channelName = parsedCmd[2];
 	// ',' 가 있으면, 쉼표를 제외한 앞부분만 채널명으로 사용
-	if (channel_name.find(",") != std::string::npos)
-		channel_name = channel_name.substr(0, channel_name.find(","));
+	if (channelName.find(",") != std::string::npos)
+		channelName = channelName.substr(0, channelName.find(","));
 	// 1. check if channel exist
-	if (_channels.find(channel_name) == _channels.end()) {
-		sendMessageToClient(client.getSocket(), ERR_NOSUCHCHANNEL(client.getNickname(), channel_name));
+	if (_channels.find(channelName) == _channels.end()) {
+		sendMessageToClient(client.getSocket(), ERR_NOSUCHCHANNEL(client.getNickname(), channelName));
 		return ;
 	}
 	// 2. check if client is in channel
-	if (_channels[channel_name]->isClientIn(client.getSocket()) == 0) {
-		sendMessageToClient(client.getSocket(), ERR_NOTONCHANNEL(client.getNickname(), channel_name));
+	if (_channels[channelName]->isClientIn(client.getSocket()) == 0) {
+		sendMessageToClient(client.getSocket(), ERR_NOTONCHANNEL(client.getNickname(), channelName));
 		return ;
 	}
 	// // 3. check if client is operator
-	// if (_channels[channel_name]->getOpers().find(client.getSocket()) == _channels[channel_name]->getOpers().end()) {
-	// 	sendMessageToClient(client.getSocket(), ERR_CHANOPRIVSNEEDED(client.getNickname(), channel_name));
+	// if (_channels[channelName]->getOpers().find(client.getSocket()) == _channels[channelName]->getOpers().end()) {
+	// 	sendMessageToClient(client.getSocket(), ERR_CHANOPRIVSNEEDED(client.getNickname(), channelName));
 	// 	return ;
 	// }
 	std::string nickname = parsedCmd[1];
@@ -271,16 +272,17 @@ void Server::INVITE(std::deque<std::string> &parsedCmd, Client &client) {
 		sendMessageToClient(client.getSocket(), ERR_NOSUCHNICK(client.getNickname(), nickname));
 		return ;
 	}
-	Client &nick_client = *(*it).second;
-	// 5. check if nick_client is already in channel and
-	// put nick_client in _invite if nick_client is never invited
-	if (_channels[channel_name]->putInvite(nick_client.getSocket(), nick_client) == 0) {
-		sendMessageToClient(client.getSocket(), ERR_USERONCHANNEL(client.getNickname(), nickname, channel_name));
+	Client &nickClient = *(*it).second;
+	// 5. check if nickClient is already in channel and
+	// put nickClient in _invite if nickClient is never invited
+	if (_channels[channelName]->putInvite(nickClient.getSocket(), nickClient) == 0) {
+		sendMessageToClient(client.getSocket(), ERR_USERONCHANNEL(client.getNickname(), nickname, channelName));
 		return ;
 	}
 	// 6. invite nickname to channel
-	sendMessageToClient(client.getSocket(), RPL_INVITING(client.getNickname(), nickname, channel_name));
-	sendMessageToClient(client.getSocket(), ":" + client.getNickname() + "!" + client.getUsername() + "@localhost INVITE " + nickname + " :" + channel_name + "\n");
+	nickClient.getInvited()[channelName] = _channels[channelName];
+	sendMessageToClient(client.getSocket(), RPL_INVITING(client.getNickname(), nickname, channelName));
+	sendMessageToClient(client.getSocket(), ":" + client.getNickname() + "!" + client.getUsername() + "@localhost INVITE " + nickname + " :" + channelName + "\r\n");
 }
 void Server::KICK(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }
 void Server::TOPIC(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }

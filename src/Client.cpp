@@ -33,6 +33,8 @@ std::string Client::getRealname() const { return (_realname); }
 
 std::map<std::string, Channel *> Client::getChannels() const { return (_channels); }
 
+std::map<std::string, Channel *> Client::getInvited() const { return (_invited); }
+
 std::string Client::getBuffer() const { return (_buffer); }
 
 bool Client::isPassed() const { return (_isPassed); }
