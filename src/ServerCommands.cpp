@@ -218,9 +218,10 @@ void Server::JOIN(std::deque<std::string> &parsedCmd, Client &client) {
 		// 3. check if channel is invite only
 		// 4. check if channel is moderated
 		// 5. check if channel is +i or +t or +k or +o or +l
-		if (_channels[channelName]->putUsers(client.getSocket(), client) == 0)
+		int putUsersResult = _channels[channelName]->putUsers(client.getSocket(), client);
+		if (putUsersResult == 0)
 			return ;
-		if (_channels[channelName]->putUsers(client.getSocket(), client) == -1) {
+		else if (putUsersResult == -1) {
 			sendMessageToClient(client.getSocket(), ERR_CHANNELISFULL(client.getNickname(), channelName));
 			return ;
 		}
@@ -280,7 +281,6 @@ void Server::INVITE(std::deque<std::string> &parsedCmd, Client &client) {
 		return ;
 	}
 	// 6. invite nickname to channel
-	nickClient.getInvited()[channelName] = _channels[channelName];
 	sendMessageToClient(client.getSocket(), RPL_INVITING(client.getNickname(), nickname, channelName));
 	sendMessageToClient(client.getSocket(), ":" + client.getNickname() + "!" + client.getUsername() + "@localhost INVITE " + nickname + " :" + channelName + "\r\n");
 }
