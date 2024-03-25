@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <map>
+#include <deque>
+#include <algorithm>
 #include "Client.hpp"
 
 #define TOPIC_SIZE 100
@@ -21,9 +23,9 @@ class Channel
 		bool						_t;
 		int							_maxClient;
 
-		std::map<int, Client*>		_users;
-		std::map<int, Client*>		_invite;
-		std::map<int, Client*>		_operators;
+		std::map<int, Client*>	_users;
+		std::deque<int>			_invite;
+		std::map<int, Client*>	_operators;
 
 		Channel();
 		Channel(const Channel& cha);
@@ -63,7 +65,7 @@ class Channel
 		bool							getI() const;
 		int								changeI(const char ch);
 
-		int								putInvite(int fd, Client& cli);
+		int								putInvite(int fd);
 		int								delInvite(int fd);
 		int								isInvite(int fd) const;
 

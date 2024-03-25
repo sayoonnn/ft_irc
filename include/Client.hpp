@@ -23,8 +23,7 @@ class Client {
 
 		std::string _buffer;
 
-		std::map<std::string, Channel *> _invited;
-		std::map<std::string, Channel *> _joined;
+		std::deque<std::string>	_invited;
 
 	public:
 		Client();
@@ -37,8 +36,8 @@ class Client {
 		std::string getNickname() const;
 		std::string getUsername() const;
 		std::string getRealname() const;
-		std::map<std::string, Channel *> getChannels() const;
-		std::map<std::string, Channel *> getInvited() const;
+		std::map<std::string, Channel *>	getChannels() const;
+		std::deque<std::string>				getInvited() const;
 		std::string getBuffer() const;
 		bool isPassed() const;
 

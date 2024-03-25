@@ -276,10 +276,12 @@ void Server::INVITE(std::deque<std::string> &parsedCmd, Client &client) {
 	Client &nickClient = *(*it).second;
 	// 5. check if nickClient is already in channel and
 	// put nickClient in _invite if nickClient is never invited
-	if (_channels[channelName]->putInvite(nickClient.getSocket(), nickClient) == 0) {
+	int putInviteResult = _channels[channelName]->putInvite(nickClient.getSocket());
+	if (putInviteResult == 0) {
 		sendMessageToClient(client.getSocket(), ERR_USERONCHANNEL(client.getNickname(), nickname, channelName));
 		return ;
-	}
+	} else if (putInviteResult == 1)
+		nickClient.getInvited().push_back(channelName);
 	// 6. invite nickname to channel
 	sendMessageToClient(client.getSocket(), RPL_INVITING(client.getNickname(), nickname, channelName));
 	sendMessageToClient(client.getSocket(), ":" + client.getNickname() + "!" + client.getUsername() + "@localhost INVITE " + nickname + " :" + channelName + "\r\n");

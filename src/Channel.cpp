@@ -217,23 +217,23 @@ int	Channel::delInvite(int fd)
 {
 	if (isInvite(fd) == 0)
 		return (0);
-	_invite.erase(_invite.find(fd));
+	_invite.erase(std::remove(_invite.begin(), _invite.end(), fd), _invite.end());
 	return (1);
 }
 
-int	Channel::putInvite(int fd, Client& cli)
+int	Channel::putInvite(int fd)
 {
 	if (isClientIn(fd) != 0)
 		return (0);
 	if (isInvite(fd) != 0)
 		return (-1);
-	_invite.insert(std::pair<int, Client*>(fd, &cli));
+	_invite.push_back(fd);
 	return (1);
 }
 
 int	Channel::isInvite(int fd) const
 {
-	if (_invite.find(fd) != _invite.end())
+	if (std::find(_invite.begin(), _invite.end(), fd) != _invite.end())
 		return (1);
 	return (0);
 }
