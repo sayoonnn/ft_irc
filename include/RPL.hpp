@@ -16,6 +16,7 @@
 #define RPL_MOTD(nickname, line)							(":ircserv 372 " + (nickname) + " : " + (line) + "\n")
 #define RPL_MOTDSTART(nickname)								(":ircserv 375 " + (nickname) + " :- ircserv Message of the day - \n")
 #define RPL_ENDOFMOTD(nickname)								(":ircserv 376 " + (nickname) + " :End of MOTD command.\n")
+#define RPL_CHANNELMODEIS(nick, channel, mode)              (":ircserv 324 " + (nick) + " " + (channel) + " " + (mode) + "\n")
 
 
 // errors
@@ -37,3 +38,5 @@
 #define ERR_CHANNELISFULL(nickname, channel)				(":ircserv 471 " + (nickname) + " " + (channel) + " :Cannot join channel (+l)\n")
 #define ERR_BADCHANMASK(channel)		        			(":ircserv 476 " + (channel) + " :Bad Channel Mask\n")
 #define ERR_CHANOPRIVSNEEDED(nickname, channel)				(":ircserv 482 " + (nickname) + " " + (channel) + " :You're not channel operator\n")
+#define ERR_UNKNOWNMODE(nickname, mode)			    (":ircserv 472 " + (nickname) + " " + (mode) + " :is unknown mode char to me\n")
+#define ERR_UMODEUNKNOWNFLAG(nickname)			    (":ircserv 501 " + (nickname) + " :Unknown MODE flag\n")
