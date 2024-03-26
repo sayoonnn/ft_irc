@@ -31,7 +31,7 @@ void Server::NICK(std::deque<std::string> &parsedCmd, Client &client) {
 	else {
 		_clientsNick.erase(nickIt);
 		_clientsNick[parsedCmd[1]] = &client;
-		std::string tmp = ":" + client.getNickname() + " NICK " + parsedCmd[1] + "\r\n"; 
+		std::string tmp = ":" + client.getNickname() + " NICK " + parsedCmd[1] + "\n"; 
 		sendMessageToClient(client.getSocket(), tmp);
 	}
 

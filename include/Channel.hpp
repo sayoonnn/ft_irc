@@ -5,6 +5,7 @@
 #include <map>
 #include <deque>
 #include <algorithm>
+#include <ctime>
 #include "Client.hpp"
 
 #define TOPIC_SIZE 100
@@ -19,7 +20,7 @@ class Channel
 		std::string					_key;
 		std::string					_topic;
 		std::string					_whoTopic; //new
-		std::time_t					_topicTimestamp; //new
+		std::string					_topicTimestamp; //new
 
 		bool						_i;
 		bool						_t;
@@ -58,7 +59,7 @@ class Channel
 		void							setTopic(std::string& to, std::string& who); //fix
 		std::string						getTopic() const;
 		std::string						getWhoTopic() const; //new
-		const std::time_t&				getTimeTopic() const; //new
+		std::string						getTimeTopic() const; //new
 
 		int								getMaxNumClients() const;
 		void							setMaxNumClients(int l);
