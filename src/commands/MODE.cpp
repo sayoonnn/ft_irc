@@ -46,7 +46,20 @@ void Server::MODE(std::deque<std::string> &parsedCmd, Client &client) {
 		return ;
 	}
 	// 8. check if mode is valid
-	if (mode[1] == 'o') {
+	// i, t : no parameter
+	// o : 1 parameter
+	// l, k : 0 or 1 parameter
+	if (mode[1] == 'i') {
+		_channels[channelName]->changeI(mode[0]);
+		sendMessageToClient(client.getSocket(), RPL_CHANNELMODEIS(client.getNickname(), channelName, mode));
+	} else if (mode[1] == 't') {
+		_channels[channelName]->changeT(mode[0]);
+		sendMessageToClient(client.getSocket(), RPL_CHANNELMODEIS(client.getNickname(), channelName, mode));
+	} else if (mode[1] == 'o') {
+		if (parsedCmd.size() < 4) {
+			sendMessageToClient(client.getSocket(), ERR_NEEDMOREPARAMS(client.getNickname(), "MODE"));
+			return ;
+		}
 		std::map<int, Client *>::iterator it = _clients.begin();
 		for (; it != _clients.end(); it++) {
 			if ((*it).second->getNickname() == parsedCmd[3])
@@ -68,14 +81,12 @@ void Server::MODE(std::deque<std::string> &parsedCmd, Client &client) {
 			_channels[channelName]->delOpers(nickClient.getSocket());
 			sendMessageToClient(client.getSocket(), RPL_CHANNELMODEIS(client.getNickname(), channelName, mode));
 		}
-	} else if (mode[1] == 'i') {
-		_channels[channelName]->changeI(mode[0]);
-		sendMessageToClient(client.getSocket(), RPL_CHANNELMODEIS(client.getNickname(), channelName, mode));
-	} else if (mode[1] == 't') {
-		_channels[channelName]->changeT(mode[0]);
-		sendMessageToClient(client.getSocket(), RPL_CHANNELMODEIS(client.getNickname(), channelName, mode));
 	} else if (mode[1] == 'l') {
 		if (mode[0] == '+') {
+			if (parsedCmd.size() < 4) {
+				sendMessageToClient(client.getSocket(), ERR_NEEDMOREPARAMS(client.getNickname(), "MODE"));
+				return ;
+			}
 			_channels[channelName]->setMaxNumClients(std::stoi(parsedCmd[3]));
 			sendMessageToClient(client.getSocket(), RPL_CHANNELMODEIS(client.getNickname(), channelName, mode));
 		} else {
@@ -84,6 +95,10 @@ void Server::MODE(std::deque<std::string> &parsedCmd, Client &client) {
 		}
 	} else if (mode[1] == 'k') {
 		if (mode[0] == '+') {
+			if (parsedCmd.size() < 4) {
+				sendMessageToClient(client.getSocket(), ERR_NEEDMOREPARAMS(client.getNickname(), "MODE"));
+				return ;
+			}
 			_channels[channelName]->setKey(parsedCmd[3]);
 			sendMessageToClient(client.getSocket(), RPL_CHANNELMODEIS(client.getNickname(), channelName, mode));
 		} else {

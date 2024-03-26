@@ -52,10 +52,8 @@ void Server::runServer() {
 			if (curSocket == _servSocket)
 				acceptClient();
 			else if (curEvent.filter == EVFILT_READ) {
-				if (recvMessageFromClient(curSocket) == SUCCESS && _clients[curSocket]->isBufferEndNl()) {
+				if (recvMessageFromClient(curSocket) == SUCCESS && _clients[curSocket]->isBufferEndNl())
 					excuteCommands(*_clients[curSocket]);
-					_clients[curSocket]->clearBuffer();
-				}
 			}
 		}
 	}
