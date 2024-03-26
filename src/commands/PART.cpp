@@ -24,7 +24,6 @@ void	Server::PART(std::deque<std::string> &parsedCmd, Client &client)
 		sendMessageToClient(client.getSocket(), ERR_NOTONCHANNEL(client.getNickname(), chaName));
 		return ;
 	}
-	//kickclient의 joined에서 대상 채널을 제거하는 함수 추가해야함.
 
 	std::string	send;
 
