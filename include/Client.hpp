@@ -18,8 +18,8 @@ class Client {
 		std::string _username;
 		std::string _realname;
 		std::string _ipAddr;
-		std::map<std::string, Channel *> _channels;
-		std::deque<std::string>	_invited;
+		std::map<std::string, Channel *>	_channels;
+		std::deque<std::string>				_invited;
 
 		bool _isPassed;
 		bool _isRegistered;
