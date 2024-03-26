@@ -13,6 +13,7 @@
 #define RPL_NAMREPLY(nickname, channel, users)	(":ircserv 353 " + (nickname) + " = " + (channel) + " :" + (users) + "\r\n")
 #define RPL_ENDOFNAMES(nickname, channel)		(":ircserv 366 " + (nickname) + " " + (channel) + " :End of NAMES list.\r\n")
 #define RPL_INVITING(nick, nick2, channel)		(":ircserv 341 " + (nick) + " " + (nick2) + " " + (channel) + "\r\n")
+#define RPL_CHANNELMODEIS(nick, channel, mode)	(":ircserv 324 " + (nick) + " " + (channel) + " " + (mode) + "\r\n")
 
 
 // errors
@@ -32,3 +33,6 @@
 #define ERR_CHANOPRIVSNEEDED(nickname, channel)	(":ircserv 482 " + (nickname) + " " + (channel) + " :You're not channel operator\r\n")
 #define ERR_NOSUCHNICK(nickname, nickname2)		(":ircserv 401 " + (nickname) + " " + (nickname2) + " :No such nick/channel\r\n")
 #define ERR_USERONCHANNEL(nick, nick2, channel)	(":ircserv 443 " + (nick) + " " + (nick2) + " " + (channel) + " :is already on channel\r\n")
+#define ERR_UNKNOWNMODE(nickname, mode)			(":ircserv 472 " + (nickname) + " " + (mode) + " :is unknown mode char to me\r\n")
+#define ERR_UMODEUNKNOWNFLAG(nickname)			(":ircserv 501 " + (nickname) + " :Unknown MODE flag\r\n")
+#define ERR_USERNOTINCHANNEL(n, n2, channel)    (":ircserv 441 " + (n) + " " + (n2) + " " + (channel) + " :They aren't on that channel\r\n")
