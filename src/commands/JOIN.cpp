@@ -34,14 +34,46 @@ void Server::JOIN(std::deque<std::string> &parsedCmd, Client &client) {
 	if (_channels.find(channelName) == _channels.end()) {
 		_channels[channelName] = new Channel(channelName, client.getSocket(), client);
 	} else {
-		// 3. check if channel is invite only
-		// 4. check if channel is moderated
-		// 5. check if channel is +i or +t or +k or +o or +l
 		int putUsersResult = _channels[channelName]->putUsers(client.getSocket(), client);
 		if (putUsersResult == 0)
 			return ;
 		else if (putUsersResult == -1) {
 			sendMessageToClient(client.getSocket(), ERR_CHANNELISFULL(client.getNickname(), channelName));
+			return ;
+		}
+	}
+	// 3. check if channel is invite only (+i)
+	if (_channels[channelName]->getI() == 1) {
+		// check if client is invited
+		if (std::find(client.getInvited().begin(), client.getInvited().end(), channelName) == client.getInvited().end()) {
+			sendMessageToClient(client.getSocket(), ERR_INVITEONLYCHAN(client.getNickname(), channelName));
+			return ;
+		}
+		// check if Channel::_invite list has client
+		if (_channels[channelName]->isInvite(client.getSocket()) == 0) {
+			sendMessageToClient(client.getSocket(), ERR_INVITEONLYCHAN(client.getNickname(), channelName));
+			return ;
+		}
+		// remove channelName from Client::_invited list
+		client.removeInvitaion(channelName);
+		// remove client from Channel::_invite list
+		_channels[channelName]->delInvite(client.getSocket());
+	}
+	// 4. check if channel has topic (+t)
+	if (_channels[channelName]->getTopic().empty())
+		sendMessageToClient(client.getSocket(), RPL_NOTOPIC(client.getNickname(), channelName));
+	else {
+		sendMessageToClient(client.getSocket(), RPL_TOPIC(client.getNickname(), channelName, _channels[channelName]->getTopic()));
+		sendMessageToClient(client.getSocket(), RPL_TOPICWHOTIME(client.getNickname(), channelName, _channels[channelName]->getWhoTopic(), _channels[channelName]->getTimeTopic()));
+	}
+	// 5. check if channel has key (+k)
+	if (_channels[channelName]->getKey().empty() == false) {
+		if (parsedCmd.size() < 3) {
+			sendMessageToClient(client.getSocket(), ERR_BADCHANNELKEY(client.getNickname(), channelName));
+			return ;
+		}
+		if (parsedCmd[2] != _channels[channelName]->getKey()) {
+			sendMessageToClient(client.getSocket(), ERR_BADCHANNELKEY(client.getNickname(), channelName));
 			return ;
 		}
 	}
@@ -55,5 +87,5 @@ void Server::JOIN(std::deque<std::string> &parsedCmd, Client &client) {
 	// 9. send ":client JOIN #channel" to other clients
 	std::list<int>	fds;
 	fds.push_back(client.getSocket());
-	sendMessageToChannel(*_channels[channelName], ":" + client.getNickname() + " JOIN " + channelName + "\n", fds);
+	sendMessageToChannel(*_channels[channelName], ":" + client.getNickname() + "!" + client.getUsername() + "@localhost JOIN " + channelName + "\n", fds);
 }

@@ -8,8 +8,9 @@
 #define RPL_MYINFO(nickname)								(":ircserv 004 " + (nickname) + " :ircserv 1.0 aw abeiIklmnoOt\n")
 
 #define RPL_NICK(newnick, oldnick)							(":" + (oldnick) + " NICK " + (newnick) + "\n")
-#define RPL_QUIT(nickname, username, reason)				(":" + (nickname) + "!~" + (username) + "@localhost QUIT :" + (reason) + "\n")
-#define ERR_CLOSELINK(nickname, username, reason)			(":ERROR :Closing Link: " + (nickname) + "[~" + (username) + "@localhost] (" + (reason) + ")\n")
+#define RPL_QUIT(nickname, username, reason)				(":" + (nickname) + "!" + (username) + "@localhost QUIT :" + (reason) + "\n")
+#define ERR_UNEXPECTQUIT(nickname, username, reason)		(":" + (nickname) + "!" + (username) + "@localhost QUIT :EOF from client" + "\n")
+#define ERR_CLOSELINK(nickname, username, reason)			(":ERROR :Closing Link: " + (nickname) + "[" + (username) + "@localhost] (" + (reason) + ")\n")
 
 
 
@@ -44,5 +45,7 @@
 #define ERR_CHANNELISFULL(nickname, channel)				(":ircserv 471 " + (nickname) + " " + (channel) + " :Cannot join channel (+l)\n")
 #define ERR_BADCHANMASK(channel)		        			(":ircserv 476 " + (channel) + " :Bad Channel Mask\n")
 #define ERR_CHANOPRIVSNEEDED(nickname, channel)				(":ircserv 482 " + (nickname) + " " + (channel) + " :You're not channel operator\n")
-#define ERR_UNKNOWNMODE(nickname, mode)			    (":ircserv 472 " + (nickname) + " " + (mode) + " :is unknown mode char to me\n")
-#define ERR_UMODEUNKNOWNFLAG(nickname)			    (":ircserv 501 " + (nickname) + " :Unknown MODE flag\n")
+#define ERR_UNKNOWNMODE(nickname, mode)			            (":ircserv 472 " + (nickname) + " " + (mode) + " :is unknown mode char to me\n")
+#define ERR_UMODEUNKNOWNFLAG(nickname)			            (":ircserv 501 " + (nickname) + " :Unknown MODE flag\n")
+#define ERR_INVITEONLYCHAN(nickname, channel)				(":ircserv 473 " + (nickname) + " " + (channel) + " :Cannot join channel (+i)\n")
+#define ERR_BADCHANNELKEY(nickname, channel)				(":ircserv 475 " + (nickname) + " " + (channel) + " :Cannot join channel (+k)\n")

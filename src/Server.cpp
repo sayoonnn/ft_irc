@@ -43,7 +43,7 @@ void Server::runServer() {
 
 	while (true) {
 		eventCnt = kevent(_kqueue, NULL, 0, _eventList, EVENT_SIZE, NULL);
-
+		
 		for (int i = 0; i < eventCnt; i++) {
 
 			struct kevent curEvent = _eventList[i];

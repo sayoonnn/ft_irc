@@ -74,7 +74,7 @@ int Server::recvMessageFromClient(int clientSocket) {
 
 	length = recv(clientSocket, buffer, BUFFER_SIZE - 1, 0);
 
-	if (length == -1) {
+	if (length <= 0) {
 		removeClient(clientSocket);
 		return (FAIL);
 	}
