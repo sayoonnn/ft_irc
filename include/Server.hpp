@@ -95,7 +95,7 @@ class Server {
 		void PART(std::deque<std::string>&, Client &);
 
 		void loadMOTD();
-		
+
 	public:
 		Server(char *, char *);
 		~Server();
