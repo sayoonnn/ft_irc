@@ -30,7 +30,7 @@ void	Server::KICK(std::deque<std::string> &parsedCmd, Client &client)
 	channel = chaIter->second;
 	if (channel->isClientIn(fd) == NOT_IN)
 	{
-		sendMessageToClient(fd, ERR_NOTONCHANNEL(client.getUsername(), client.getNickname(), parsedCmd[1]));
+		sendMessageToClient(fd, ERR_NOTONCHANNEL(client.getNickname(), parsedCmd[1]));
 		return ;
 	}
 
