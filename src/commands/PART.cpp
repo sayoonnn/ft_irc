@@ -28,9 +28,10 @@ void	Server::PART(std::deque<std::string> &parsedCmd, Client &client)
 
 	std::string	send;
 
-	send = client.getNickname() + "!" + client.getUsername() + "@localhost PART " + chaName + " :";
+	send = ":" + client.getNickname() + "!" + client.getUsername() + "@localhost PART " + chaName + " :";
 	if (parsedCmd.size() >= 3)
 		send += parsedCmd[2];
+	send += "\n";
 	sendMessageToClient(client.getSocket(), send);
 	if (isNoClientInChannel(parsedCmd[1]) == 0)
 		sendMessageToChannel(*channel, send);

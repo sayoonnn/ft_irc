@@ -34,11 +34,6 @@ void	Server::PRIVMSG(std::deque<std::string> &parsedCmd, Client &client)
 		}
 		
 		Channel *channel = chaIter->second;
-		if (channel->isClientIn(fd) == 0)
-		{
-			sendMessageToClient(fd, ERR_CANNOTSENDTOCHAN(client.getNickname(), target));
-			return ;
-		}
 		std::list<int>	fds;
 		fds.push_back(fd);
 		sendMessageToChannel(*channel, send, fds);
