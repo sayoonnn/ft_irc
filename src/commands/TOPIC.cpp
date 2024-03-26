@@ -14,18 +14,21 @@ void	Server::TOPIC(std::deque<std::string> &parsedCmd, Client &client)
 		sendMessageToClient(fd, ERR_NEEDMOREPARAMS(client.getNickname(), "TOPIC"));
 		return ;
 	}
+
 	chaIter = _channels.find(parsedCmd[1]);
 	if (chaIter == _channels.end())
 	{
 		sendMessageToClient(fd, ERR_NOSUCHCHANNEL(client.getNickname(), parsedCmd[1]));
 		return ;
 	}
+
 	channel = chaIter->second;
 	if (channel->isClientIn(fd) == 0)
 	{
 		sendMessageToClient(fd, ERR_NOTONCHANNEL(client.getUsername(), client.getNickname(), parsedCmd[1]));
 		return ;
 	}
+
 	if (parsedCmd.size() >= 3)
 	{
 		if (channel->getT() == true && channel->isClientIn(fd) == 1)
@@ -33,9 +36,9 @@ void	Server::TOPIC(std::deque<std::string> &parsedCmd, Client &client)
 			sendMessageToClient(fd, ERR_CHANOPRIVSNEEDED(client.getNickname(), parsedCmd[1]));
 			return ;
 		}
-		send = client.getNickname() + "!" + client.getUsername() + "@localhost";
-		channel->setTopic(parsedCmd[3], send);
-		send = send + " TOPIC " + parsedCmd[1] + " :" + parsedCmd[3];
+		send = ":" + client.getNickname();
+		channel->setTopic(parsedCmd[2], send);
+		send += " TOPIC " + parsedCmd[1] + " :" + parsedCmd[2] + "\n";
 		sendMessageToChannel(*channel, send);
 	}
 	else
@@ -46,7 +49,7 @@ void	Server::TOPIC(std::deque<std::string> &parsedCmd, Client &client)
 			return ;
 		}
 		sendMessageToClient(fd, RPL_TOPIC(client.getNickname(), parsedCmd[1], channel->getTopic()));
-		// sendMessageToClient(fd, RPL_TOPICWHOTIME(client.getNickname(), parsedCmd[1], channel->getWhoTopic(), channel->getTimeTopic()));
+		sendMessageToClient(fd, RPL_TOPICWHOTIME(client.getNickname(), parsedCmd[1], channel->getWhoTopic(), channel->getTimeTopic()));
 	}
 }
 

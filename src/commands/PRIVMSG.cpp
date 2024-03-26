@@ -23,7 +23,7 @@ void	Server::PRIVMSG(std::deque<std::string> &parsedCmd, Client &client)
 	target = splitComma(parsedCmd[1]);
 	if (target.size() != 0)
 		type = target[0];
-	send = ":" + client.getNickname() + "!" + client.getUsername() + "@localhost" + " PRIVMSG " + target + " :" + parsedCmd[2] + "\r\n";
+	send = ":" + client.getNickname() + "!" + client.getUsername() + "@localhost" + " PRIVMSG " + target + " :" + parsedCmd[2] + "\n";
 	if (type == '#')
 	{
 		std::map<std::string, Channel *>::iterator	chaIter = _channels.find(target);
@@ -32,6 +32,7 @@ void	Server::PRIVMSG(std::deque<std::string> &parsedCmd, Client &client)
 			sendMessageToClient(fd, ERR_NOSUCHNICK(client.getNickname(), target));
 			return ;
 		}
+		
 		Channel *channel = chaIter->second;
 		if (channel->isClientIn(fd) == 0)
 		{

@@ -147,7 +147,9 @@ void	Channel::setTopic(std::string& to, std::string& who)
 	else
 		_topic = to;
 	_whoTopic = who;
-	_topicTimestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+
+	time_t tmp = std::time(0);
+	_topicTimestamp = std::ctime(&tmp);
 }
 
 std::string	Channel::getTopic() const
@@ -160,7 +162,7 @@ std::string	Channel::getWhoTopic() const
 	return (_whoTopic);
 }
 
-const std::time_t&	Channel::getTimeTopic() const
+std::string	Channel::getTimeTopic() const
 {
 	return (_topicTimestamp);
 }
