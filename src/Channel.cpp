@@ -48,7 +48,7 @@ int	Channel::numUsers() const
 	return (_users.size());
 }
 
-const std::map<int, Client*>&	Channel::getUsers() const
+const std::map<int, Client*>	Channel::getUsers() const
 {
 	return (_users);
 }
@@ -105,7 +105,7 @@ int	Channel::numOpers() const
 	return (_operators.size());
 }
 
-const std::map<int, Client*>&	Channel::getOpers() const
+const std::map<int, Client*>	Channel::getOpers() const
 {
 	return (_operators);
 }
@@ -140,17 +140,31 @@ std::string	Channel::getKey() const
 
 //    Topic
 
-void	Channel::setTopic(const std::string& to)
+void	Channel::setTopic(std::string& to, std::string& who)
 {
 	if (to.size() > TOPIC_SIZE)
 		_topic = to.substr(0, TOPIC_SIZE);
 	else
 		_topic = to;
+	_whoTopic = who;
+
+	time_t tmp = std::time(0);
+	_topicTimestamp = std::ctime(&tmp);
 }
 
 std::string	Channel::getTopic() const
 {
 	return (_topic);
+}
+
+std::string	Channel::getWhoTopic() const
+{
+	return (_whoTopic);
+}
+
+std::string	Channel::getTimeTopic() const
+{
+	return (_topicTimestamp);
 }
 
 //    MaxNumClients

@@ -14,10 +14,19 @@ Server::Server(char *port, char *password)
 
 Server::~Server() {
 
-	std::map<int, Client *>::iterator it = _clients.begin();
+	{
+		std::map<int, Client *>::iterator it = _clients.begin();
 
-	for (; it != _clients.end(); it++)
-		delete (*it).second;
+		for (; it != _clients.end(); it++)
+			delete (*it).second;
+	}
+
+	{
+		std::map<std::string, Channel *>::iterator it = _channels.begin();
+
+		for (; it != _channels.end(); it++)
+			delete (*it).second;
+	}
 
 	printServerLog("closed");
 }

@@ -1,13 +1,29 @@
 
 NAME		=	ircserv
 
+CMDS		=	INVITE.cpp\
+				JOIN.cpp\
+				KICK.cpp\
+				MODE.cpp\
+				NICK.cpp\
+				PART.cpp\
+				PASS.cpp\
+				PING.cpp\
+				PRIVMSG.cpp\
+				QUIT.cpp\
+				TOPIC.cpp\
+				USER.cpp\
+				WHO.cpp
+
 SRC			=	Channel.cpp\
 				Client.cpp\
 				main.cpp\
 				Server.cpp\
 				ServerCommands.cpp\
 				ServerKqueue.cpp\
-				ServerNetwork.cpp
+				ServerNetwork.cpp\
+				$(CMDS)
+				
 
 INCLUDES	=	Channel.hpp\
 				Client.hpp\
@@ -25,7 +41,7 @@ INC			=	include
 CXX			= c++
 CXXFLAGS	= -Wall -Werror -Wextra -std=c++98
 
-vpath %.cpp	src
+vpath %.cpp	src src/commands
 vpath %.hpp	include
 
 UP			=	\033[A

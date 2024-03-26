@@ -67,6 +67,10 @@
 		"iomanip": "cpp",
 		"fstream": "cpp",
 		"stack": "cpp",
-		"csignal": "cpp"
+		"csignal": "cpp",
+		"__functional_03": "cpp",
+		"memory_resource": "cpp",
+		"filesystem": "cpp",
+		"list": "cpp"
 	}
 }
