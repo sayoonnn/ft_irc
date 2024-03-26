@@ -90,7 +90,7 @@ void Server::MODE(std::deque<std::string> &parsedCmd, Client &client) {
 			_channels[channelName]->setMaxNumClients(std::stoi(parsedCmd[3]));
 			sendMessageToClient(client.getSocket(), RPL_CHANNELMODEIS(client.getNickname(), channelName, mode));
 		} else {
-			_channels[channelName]->setMaxNumClients(0);
+			_channels[channelName]->setMaxNumClients(MAX_CLIENTS);
 			sendMessageToClient(client.getSocket(), RPL_CHANNELMODEIS(client.getNickname(), channelName, mode));
 		}
 	} else if (mode[1] == 'k') {
