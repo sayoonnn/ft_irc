@@ -24,7 +24,7 @@ void	Server::PART(std::deque<std::string> &parsedCmd, Client &client)
 		sendMessageToClient(client.getSocket(), ERR_NOTONCHANNEL(client.getNickname(), chaName));
 		return ;
 	}
-	//client.partChannel(parsedCmd[1]);
+	client.partChannel(parsedCmd[1]);
 
 	std::string	send;
 
