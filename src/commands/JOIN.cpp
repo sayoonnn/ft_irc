@@ -55,5 +55,5 @@ void Server::JOIN(std::deque<std::string> &parsedCmd, Client &client) {
 	// 9. send ":client JOIN #channel" to other clients
 	std::list<int>	fds;
 	fds.push_back(client.getSocket());
-	sendMessageToChannel(*_channels[channelName], ":" + client.getNickname() + " JOIN " + channelName + "\n", fds);
+	sendMessageToChannel(*_channels[channelName], ":" + client.getNickname() + "!" + client.getUsername() + "@localhost JOIN " + channelName + "\n", fds);
 }

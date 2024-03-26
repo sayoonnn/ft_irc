@@ -8,8 +8,9 @@
 #define RPL_MYINFO(nickname)								(":ircserv 004 " + (nickname) + " :ircserv 1.0 aw abeiIklmnoOt\n")
 
 #define RPL_NICK(newnick, oldnick)							(":" + (oldnick) + " NICK " + (newnick) + "\n")
-#define RPL_QUIT(nickname, username, reason)				(":" + (nickname) + "!~" + (username) + "@localhost QUIT :" + (reason) + "\n")
-#define ERR_CLOSELINK(nickname, username, reason)			(":ERROR :Closing Link: " + (nickname) + "[~" + (username) + "@localhost] (" + (reason) + ")\n")
+#define RPL_QUIT(nickname, username, reason)				(":" + (nickname) + "!" + (username) + "@localhost QUIT :" + (reason) + "\n")
+#define ERR_UNEXPECTQUIT(nickname, username, reason)		(":" + (nickname) + "!" + (username) + "@localhost QUIT :EOF from client" + "\n")
+#define ERR_CLOSELINK(nickname, username, reason)			(":ERROR :Closing Link: " + (nickname) + "[" + (username) + "@localhost] (" + (reason) + ")\n")
 
 
 
