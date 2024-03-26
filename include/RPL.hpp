@@ -7,8 +7,11 @@
 #define RPL_CREATED(nickname, datetime)						(":ircserv 003 " + (nickname) + " :This server was created " + (datetime)  + "\n")
 #define RPL_MYINFO(nickname)								(":ircserv 004 " + (nickname) + " :ircserv 1.0 aw abeiIklmnoOt\n")
 
-
 #define RPL_NICK(newnick, oldnick)							(":" + (oldnick) + " NICK " + (newnick) + "\n")
+#define RPL_QUIT(nickname, username, reason)				(":" + (nickname) + "!~" + (username) + "@localhost QUIT :" + (reason) + "\n")
+#define ERR_CLOSELINK(nickname, username, reason)			(":ERROR :Closing Link: " + (nickname) + "[~" + (username) + "@localhost] (" + (reason) + ")\n")
+
+
 
 #define RPL_NOTOPIC(client, channel)						(":ircserv 331 " + (client) + " " + (channel) + " :No topic is set\n")
 #define RPL_TOPIC(client, channel, topic)					(":ircserv 332 " + (client) + " " + (channel) + " :" + (topic) + "\n")
