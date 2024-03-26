@@ -45,7 +45,6 @@ void Server::JOIN(std::deque<std::string> &parsedCmd, Client &client) {
 			return ;
 		}
 	}
-
 	// 6. join channel
 	client.joinChannel(channelName, _channels[channelName]);
 	sendMessageToClient(client.getSocket(), ":" + client.getNickname() + "!" + client.getUsername() + "@localhost JOIN :" + channelName + "\n");
@@ -53,4 +52,8 @@ void Server::JOIN(std::deque<std::string> &parsedCmd, Client &client) {
 	sendMessageToClient(client.getSocket(), RPL_NAMREPLY(client.getNickname(), channelName, _channels[channelName]->getUsersList()));
 	// 8. send RPL_ENDOFNAMES
 	sendMessageToClient(client.getSocket(), RPL_ENDOFNAMES(client.getNickname(), channelName));
+	// 9. send ":client JOIN #channel" to other clients
+	std::list<int>	fds;
+	fds.push_back(client.getSocket());
+	sendMessageToChannel(*_channels[channelName], ":" + client.getNickname() + " JOIN " + channelName + "\n", fds);
 }
