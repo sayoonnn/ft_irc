@@ -3,8 +3,8 @@
 
 #include <iostream>
 #include <map>
-#include <ctime>
-#include <chrono>
+#include <deque>
+#include <algorithm>
 #include "Client.hpp"
 
 #define TOPIC_SIZE 100
@@ -15,19 +15,19 @@ class Client;
 class Channel
 {
 	private:
-		std::string					_key;
 		std::string					_name;
+		std::string					_key;
 		std::string					_topic;
 		std::string					_whoTopic; //new
 		std::time_t					_topicTimestamp; //new
 
-		int							_maxClient;
 		bool						_i;
 		bool						_t;
+		int							_maxClient;
 
-		std::map<int, Client*>		_users;
-		std::map<int, Client*>		_invite;
-		std::map<int, Client*>		_operators;
+		std::map<int, Client*>	_users;
+		std::deque<int>			_invite;
+		std::map<int, Client*>	_operators;
 
 		Channel();
 		Channel(const Channel& cha);
@@ -41,12 +41,13 @@ class Channel
 		int								putUsers(int fd, Client& cli);
 		int								delUsers(int fd);
 		int								numUsers() const;
-		const std::map<int, Client*>&	getUsers() const;
+		const std::map<int, Client*>	getUsers() const;
+		std::string						getUsersList() const;
 
 		int								putOpers(int fd);
 		int								delOpers(int fd);
 		int								numOpers() const;
-		const std::map<int, Client*>&	getOpers() const;
+		const std::map<int, Client*>	getOpers() const;
 
 		int								isClientIn(int fd) const;
 		int								numClients() const;
@@ -54,10 +55,10 @@ class Channel
 		void							setKey(const std::string& k);
 		std::string						getKey() const;
 
-		void							setTopic(const std::string& to, const std::string& who); //fix
+		void							setTopic(std::string& to, std::string& who); //fix
 		std::string						getTopic() const;
 		std::string						getWhoTopic() const; //new
-		std::time_t&					getTimeTopic() const; //new
+		const std::time_t&				getTimeTopic() const; //new
 
 		int								getMaxNumClients() const;
 		void							setMaxNumClients(int l);
@@ -68,7 +69,7 @@ class Channel
 		bool							getI() const;
 		int								changeI(const char ch);
 
-		int								putInvite(int fd, Client& cli);
+		int								putInvite(int fd);
 		int								delInvite(int fd);
 		int								isInvite(int fd) const;
 

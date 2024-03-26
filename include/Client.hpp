@@ -3,7 +3,12 @@
 
 #include <string>
 #include <map>
-#include "Channel.hpp"
+#include <deque>
+#include <arpa/inet.h>
+
+#define MAX_CHANNELS 50
+
+class Channel;
 
 class Client {
 
@@ -12,14 +17,15 @@ class Client {
 		std::string _nickname;
 		std::string _username;
 		std::string _realname;
+		std::string _ipAddr;
+		std::map<std::string, Channel *> _channels;
 
 		bool _isPassed;
 		bool _isRegistered;
 
 		std::string _buffer;
 
-		std::map<std::string, Channel *> _invited;
-		std::map<std::string, Channel *> _joined;
+		std::deque<std::string>	_invited;
 
 	public:
 		Client();
@@ -32,6 +38,9 @@ class Client {
 		std::string getNickname() const;
 		std::string getUsername() const;
 		std::string getRealname() const;
+		std::string getIpAddr() const;
+		std::map<std::string, Channel *>	getChannels() const;
+		std::deque<std::string>				getInvited() const;
 		std::string getBuffer() const;
 		bool isPassed() const;
 
@@ -40,6 +49,7 @@ class Client {
 		void setUsername(std::string);
 		void setRealname(std::string);
 		void setBuffer(std::string);
+		void setIpAddr();
 		void setPassed();
 		void setRegistered();
 

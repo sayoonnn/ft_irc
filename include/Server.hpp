@@ -17,6 +17,7 @@
 #include <sstream>
 #include <iostream>
 #include <vector>
+#include <list>
 #include <map>
 #include <deque>
 
@@ -74,14 +75,16 @@ class Server {
 		void parseCommand(std::string, std::deque<std::string>&);
 		void parseByChar(std::string, char, std::deque<std::string>&);
 
-		bool checkCmdArgs(std::deque<std::string>&);
+		std::string splitComma(const std::string);
+		void sendMessageToChannel(Channel&, const std::string&, std::list<int>&);
+		void sendMessageToChannel(Channel&, const std::string&);
+		int	isNoClientInChannel(const std::string&);
 
 		void PASS(std::deque<std::string>&, Client &);
 		void NICK(std::deque<std::string>&, Client &);
 		void USER(std::deque<std::string>&, Client &);
 		void PING(std::deque<std::string>&, Client &);
 		void QUIT(std::deque<std::string>&, Client &);
-	
 		void JOIN(std::deque<std::string>&, Client &);
 		void WHO(std::deque<std::string>&, Client &);
 		void MODE(std::deque<std::string>&, Client &);

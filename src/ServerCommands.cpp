@@ -21,24 +21,6 @@ void  Server::parseCommand(std::string str, std::deque<std::string> &parsedCmd) 
 		parsedCmd.push_back(colonArg);
 }
 
-bool Server::checkCmdArgs(std::deque<std::string> &parsedCmd) {
-
-	std::string cmdType = parsedCmd[0];
-	size_t argsNeed = 0;
-	
-	if (cmdType == "QUIT" || cmdType == "MODE" || cmdType == "PONG")
-		argsNeed = 1;
-	else if (cmdType == "PASS" || cmdType == "NICK" || cmdType == "PART" || cmdType == "JOIN" || cmdType == "PRIVMSG" || cmdType == "TOPIC" || cmdType == "PING" || cmdType == "PART")
-		argsNeed = 2;
-	else if (cmdType == "KICK" || cmdType == "INVITE")
-		argsNeed = 3;
-	else if (cmdType == "USER")
-		argsNeed = 5;
-
-	return (parsedCmd.size() == argsNeed);
-
-}
-
 void Server::parseByChar(std::string target, char delimeter, std::deque<std::string> &commands) {
 
 	std::stringstream ss(target);
@@ -70,10 +52,8 @@ void Server::excuteCommands(Client& client)
 
 			if (_cmdMap.find(cmdType) == _cmdMap.end())
 				sendMessageToClient(client.getSocket(), ERR_UNKNOWNCOMMAND(client.getNickname(), parsedCmd[0]));
-			else if (checkCmdArgs(parsedCmd))
-				(this->*_cmdMap[cmdType])(parsedCmd, client);
 			else
-				sendMessageToClient(client.getSocket(), ERR_NEEDMOREPARAMS(client.getNickname(), cmdType));
+				(this->*_cmdMap[cmdType])(parsedCmd, client);
 		}
 		else {
 
@@ -107,88 +87,77 @@ void Server::sayHelloToClient(Client &client) {
 }
 
 
-void Server::NICK(std::deque<std::string> &parsedCmd, Client &client) {
+std::string	Server::splitComma(const std::string str)
+{
+	size_t	start = 0;
+	size_t	i = 0;
 
-	if (parsedCmd.size() < 2) {
-		sendMessageToClient(client.getSocket(), ERR_NEEDMOREPARAMS(client.getNickname(), "NICK"));
-		return ;
-	}
-
-	std::map<int, Client *>::iterator it = _clients.begin();
-
-	for (; it != _clients.end(); it++) {
-		if ((*it).second->getNickname() == parsedCmd[1] && (*it).second != &client) {
-			sendMessageToClient(client.getSocket(), ERR_NICKNAMEINUSE(client.getUsername(), parsedCmd[1]));
-			return ;
+	for (; i < str.size() && str[i] != '\n' && str[i] != '\r'; ++ i)
+	{
+		if (str[i] == ',')
+		{
+			if (start < i)
+				return (str.substr(start, i - start));
 		}
 	}
+	return (str.substr(start, i - start));
+}
 
-	if (parsedCmd[1].find(" ") != std::string::npos || parsedCmd[1].find("&") != std::string::npos ||
-	parsedCmd[1].find("#") != std::string::npos || parsedCmd[1].find(",") != std::string::npos) {
-		sendMessageToClient(client.getSocket(), ERR_ERRONEUSNICKNAME(client.getNickname(), parsedCmd[1]));
-		return ;
+void	Server::sendMessageToChannel(Channel& channel, const std::string& message, std::list<int>& mask)
+{
+	std::map<int, Client*>	users = channel.getUsers();
+	std::map<int, Client*>	opers = channel.getOpers();
+
+	std::list<int>::iterator	iter = mask.begin();
+	for (std::map<int, Client*>::iterator u_iter = users.begin(); u_iter != users.end(); ++ u_iter)
+	{
+		while (iter != mask.end() && *iter < u_iter->first)
+			++ iter;
+		if (iter == mask.end() || *iter > u_iter->first)
+		{
+			sendMessageToClient(u_iter->first, message);
+			mask.insert(iter, u_iter->first);
+		}
 	}
-
-	client.setNickname(parsedCmd[1]);
-
-	if (client.isPassed() && client.getUsername() != "" && !client.isRegistered()) {
-		client.setRegistered();
-		sayHelloToClient(client);
+	iter = mask.begin();
+	for (std::map<int, Client*>::iterator o_iter = opers.begin(); o_iter != opers.end(); ++ o_iter)
+	{
+		while (iter != mask.end() && *iter < o_iter->first)
+			++ iter;
+		if (iter == mask.end() || *iter > o_iter->first)
+		{
+			sendMessageToClient(o_iter->first, message);
+			mask.insert(iter, o_iter->first);
+		}
 	}
 }
 
-void Server::PASS(std::deque<std::string> &parsedCmd, Client &client) {
+void	Server::sendMessageToChannel(Channel& channel, const std::string& message)
+{
+	std::map<int, Client*>	users = channel.getUsers();
+	std::map<int, Client*> opers = channel.getOpers();
 
-	if (parsedCmd.size() < 2) {
-		sendMessageToClient(client.getSocket(), ERR_NEEDMOREPARAMS(client.getNickname(), "PASS"));
-		return ;
-	}
-
-	if (client.isPassed()) {
-		sendMessageToClient(client.getSocket(), ERR_ALREADYREGISTERED(client.getNickname()));
-		return ;
-	}
-
-	if (_password != parsedCmd[1]) {
-		sendMessageToClient(client.getSocket(), ERR_PASSWDMISMATCH(client.getNickname()));
-		return ;
-	}
-
-	client.setPassed();
+	for (std::map<int, Client*>::iterator u_iter = users.begin(); u_iter != users.end(); ++ u_iter)
+		sendMessageToClient(u_iter->first, message);
+	for (std::map<int, Client*>::iterator o_iter = opers.begin(); o_iter != opers.end(); ++ o_iter)
+		sendMessageToClient(o_iter->first, message);
 }
 
-void Server::USER(std::deque<std::string> &parsedCmd, Client &client) {
+int	Server::isNoClientInChannel(const std::string& name)
+{
+	std::map<std::string, Channel *>::iterator chaIter;
 
-	if (parsedCmd.size() < 5) {
-		sendMessageToClient(client.getSocket(), ERR_NEEDMOREPARAMS(client.getNickname(), "USER"));
-		return ;
+	chaIter = _channels.find(name);
+	if (chaIter == _channels.end())
+	{
+		std::cerr << "This is error in the inNoClientInChannel" << std::endl;
+		return (-1);
 	}
-
-	if (client.isRegistered()) {
-		sendMessageToClient(client.getSocket(), ERR_ALREADYREGISTERED(client.getNickname()));
-		return ;
-	}
-
-	client.setUsername(parsedCmd[1]);
-	client.setRealname(parsedCmd[4]);
-
-	if (client.isPassed() && client.getNickname() != "" && !client.isRegistered()) {
-		client.setRegistered();
-		sayHelloToClient(client);
-	}
+	Channel*	cha = chaIter->second;
+	if (cha->numClients() != 0)
+		return (0);
+	delete cha;
+	_channels.erase(chaIter);
+	return (1);
 }
-
-void Server::PING(std::deque<std::string> &parsedCmd, Client &client) {
-	sendMessageToClient(client.getSocket(), ":ircserv PONG " + parsedCmd[1] + "\n");
-}
-
-void Server::QUIT(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }
-void Server::JOIN(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }
-void Server::WHO(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }
-void Server::MODE(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }
-void Server::INVITE(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }
-void Server::KICK(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }
-void Server::TOPIC(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }
-void Server::PART(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }
-void Server::PRIVMSG(std::deque<std::string> &parsedCmd, Client &client) { (void)parsedCmd, (void)client; }
 

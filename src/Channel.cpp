@@ -48,9 +48,20 @@ int	Channel::numUsers() const
 	return (_users.size());
 }
 
-const std::map<int, Client*>&	Channel::getUsers() const
+const std::map<int, Client*>	Channel::getUsers() const
 {
 	return (_users);
+}
+
+std::string	Channel::getUsersList() const
+{
+	std::string	list;
+
+	for (std::map<int, Client*>::const_iterator it = _users.begin(); it != _users.end(); it++)
+		list += it->second->getNickname() + " ";
+	for (std::map<int, Client*>::const_iterator it = _operators.begin(); it != _operators.end(); it++)
+		list += "@" + it->second->getNickname() + " ";
+	return (list);
 }
 
 //    Opers
@@ -94,7 +105,7 @@ int	Channel::numOpers() const
 	return (_operators.size());
 }
 
-const std::map<int, Client*>&	Channel::getOpers() const
+const std::map<int, Client*>	Channel::getOpers() const
 {
 	return (_operators);
 }
@@ -129,7 +140,7 @@ std::string	Channel::getKey() const
 
 //    Topic
 
-void	Channel::setTopic(const std::string& to, const std::string& who)
+void	Channel::setTopic(std::string& to, std::string& who)
 {
 	if (to.size() > TOPIC_SIZE)
 		_topic = to.substr(0, TOPIC_SIZE);
@@ -218,21 +229,23 @@ int	Channel::delInvite(int fd)
 {
 	if (isInvite(fd) == 0)
 		return (0);
-	_invite.erase(_invite.find(fd));
+	_invite.erase(std::remove(_invite.begin(), _invite.end(), fd), _invite.end());
 	return (1);
 }
 
-int	Channel::putInvite(int fd, Client& cli)
+int	Channel::putInvite(int fd)
 {
 	if (isClientIn(fd) != 0)
 		return (0);
-	_invite.insert(std::pair<int, Client*>(fd, &cli));
+	if (isInvite(fd) != 0)
+		return (-1);
+	_invite.push_back(fd);
 	return (1);
 }
 
 int	Channel::isInvite(int fd) const
 {
-	if (_invite.find(fd) != _invite.end())
+	if (std::find(_invite.begin(), _invite.end(), fd) != _invite.end())
 		return (1);
 	return (0);
 }
