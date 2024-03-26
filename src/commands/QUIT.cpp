@@ -10,6 +10,7 @@ void Server::QUIT(std::deque<std::string> &parsedCmd, Client &client) {
 	std::string	nickname = "Unknown";
 	std::string	username = "Unknown";
 	std::string	reason = "";
+	
 	if (client.getNickname() != "")
 		nickname = client.getNickname();
 	if (client.getUsername() != "")

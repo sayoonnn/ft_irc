@@ -38,8 +38,10 @@ void Server::acceptClient() {
 
 	fcntl(clientSocket, F_SETFL, O_NONBLOCK);
 	addClientKq(clientSocket);
-	_clients[clientSocket] = new Client(clientSocket);
 
+	Client *tmp = new Client(clientSocket);
+	tmp->setIpAddr();
+	_clients[clientSocket] = tmp;
 }
 
 void Server::removeClient(int clientSocket) {
@@ -49,9 +51,7 @@ void Server::removeClient(int clientSocket) {
 	ss << clientSocket;
 	printServerLog("Client " + ss.str() + " disconnected");
 	removeClientKq(clientSocket);
-	_clients.erase(_clients.find(clientSocket));
 	close(clientSocket);
-
 }
 
 int Server::recvMessageFromClient(int clientSocket) {

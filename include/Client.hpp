@@ -19,13 +19,12 @@ class Client {
 		std::string _realname;
 		std::string _ipAddr;
 		std::map<std::string, Channel *> _channels;
+		std::deque<std::string>	_invited;
 
 		bool _isPassed;
 		bool _isRegistered;
 
 		std::string _buffer;
-
-		std::deque<std::string>	_invited;
 
 	public:
 		Client();
@@ -39,6 +38,8 @@ class Client {
 		std::string getUsername() const;
 		std::string getRealname() const;
 		std::string getIpAddr() const;
+
+		void joinChannel(std::string, Channel *);
 		std::map<std::string, Channel *>	getChannels() const;
 		std::deque<std::string>				getInvited() const;
 		std::string getBuffer() const;
