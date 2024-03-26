@@ -55,7 +55,7 @@ void	Server::KICK(std::deque<std::string> &parsedCmd, Client &client)
 	}
 	//kickclient의 joined에서 대상 채널을 제거하는 함수 추가해야함.
 
-	send = client.getNickname() + "!" + client.getUsername() + "@localhost KICK " + parsedCmd[1] + " " + parsedCmd[2] + " :";
+	send = ":" + client.getNickname() + "!" + client.getUsername() + "@localhost KICK " + parsedCmd[1] + " " + parsedCmd[2] + " :";
 	if (parsedCmd.size() >= 4)
 		send += parsedCmd[3];
 	sendMessageToClient(kickClient->getSocket(), send);
