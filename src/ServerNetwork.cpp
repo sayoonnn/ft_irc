@@ -50,8 +50,20 @@ void Server::removeClient(int clientSocket) {
 
 	ss << clientSocket;
 	printServerLog("Client " + ss.str() + " disconnected");
+
+	Client *client = _clients[clientSocket];
+
+	std::map<std::string, Client *>::iterator	iterClientsNick = _clientsNick.find(client->getNickname());
+	if (iterClientsNick != _clientsNick.end())
+		_clientsNick.erase(iterClientsNick);
+
+	std::map<int, Client *>::iterator			iterClients = _clients.find(client->getSocket());
+	if (iterClients != _clients.end())
+		_clients.erase(iterClients);
+
 	removeClientKq(clientSocket);
 	close(clientSocket);
+	delete iterClients->second;
 }
 
 int Server::recvMessageFromClient(int clientSocket) {

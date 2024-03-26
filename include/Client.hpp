@@ -40,6 +40,11 @@ class Client {
 		std::string getIpAddr() const;
 
 		void joinChannel(std::string, Channel *);
+		void partChannel(std::string);
+
+		void getInvitaion(std::string);
+		void removeInvitaion(std::string);
+
 		std::map<std::string, Channel *>	getChannels() const;
 		std::deque<std::string>				getInvited() const;
 		std::string getBuffer() const;

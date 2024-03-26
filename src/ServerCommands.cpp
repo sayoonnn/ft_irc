@@ -49,8 +49,8 @@ void Server::excuteCommands(Client& client)
 		cmdType = parsedCmd[0];
 
 		if (cmdType == "QUIT") {
-			removeClient(client.getSocket());
 			QUIT(parsedCmd, client);
+			removeClient(client.getSocket());
 			return ;
 		}
 		else if (client.isRegistered()) {

@@ -35,6 +35,15 @@ std::string Client::getIpAddr() const { return (_ipAddr); }
 
 void Client::joinChannel(std::string chanName, Channel *channel) { _channels[chanName] = channel; }
 
+void Client::partChannel(std::string chanName) {
+
+	std::map<std::string, Channel *>::iterator it = _channels.find(chanName);
+
+	if (it != _channels.end())
+		_channels.erase(it);
+
+}
+
 std::map<std::string, Channel *> Client::getChannels() const { return (_channels); }
 
 std::deque<std::string> Client::getInvited() const { return (_invited); }
@@ -43,6 +52,14 @@ std::string Client::getBuffer() const { return (_buffer); }
 
 bool Client::isPassed() const { return (_isPassed); }
 
+
+void Client::getInvitaion(std::string chanName) { _invited.push_back(chanName); }
+
+void Client::removeInvitaion(std::string chanName) {
+
+	_invited.erase(std::remove(_invited.begin(), _invited.end(), chanName), _invited.end());
+
+}
 
 
 void Client::setSocket(int socket) { _socket = socket; }
