@@ -13,21 +13,25 @@ void Server::INVITE(std::deque<std::string> &parsedCmd, Client &client) {
 	// ',' 가 있으면, 쉼표를 제외한 앞부분만 채널명으로 사용
 	if (channelName.find(",") != std::string::npos)
 		channelName = channelName.substr(0, channelName.find(","));
+	
 	// 1. check if channel exist
 	if (_channels.find(channelName) == _channels.end()) {
 		sendMessageToClient(client.getSocket(), ERR_NOSUCHCHANNEL(client.getNickname(), channelName));
 		return ;
 	}
+	
 	// 2. check if client is in channel
 	if (_channels[channelName]->isClientIn(client.getSocket()) == 0) {
-		sendMessageToClient(client.getSocket(), ERR_NOTONCHANNEL(client.getUsername(), client.getNickname(), channelName));
+		sendMessageToClient(client.getSocket(), ERR_NOTONCHANNEL(client.getUsername(),client.getNickname(), channelName));
 		return ;
 	}
+	
 	// // 3. check if client is operator
 	// if (_channels[channelName]->getOpers().find(client.getSocket()) == _channels[channelName]->getOpers().end()) {
 	// 	sendMessageToClient(client.getSocket(), ERR_CHANOPRIVSNEEDED(client.getNickname(), channelName));
 	// 	return ;
 	// }
+	
 	std::string nickname = parsedCmd[1];
 	// 4. check if nickname to be invited to channel exists in server
 	std::map<int, Client *>::iterator it = _clients.begin();

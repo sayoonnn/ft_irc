@@ -2,10 +2,11 @@
 # define CHANNEL_HPP
 
 #include <iostream>
+#include <sstream>
 #include <map>
 #include <deque>
-#include <algorithm>
 #include <ctime>
+#include <algorithm>
 #include "Client.hpp"
 
 #define TOPIC_SIZE 100

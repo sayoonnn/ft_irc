@@ -19,13 +19,12 @@ class Client {
 		std::string _realname;
 		std::string _ipAddr;
 		std::map<std::string, Channel *> _channels;
+		std::deque<std::string>	_invited;
 
 		bool _isPassed;
 		bool _isRegistered;
 
 		std::string _buffer;
-
-		std::deque<std::string>	_invited;
 
 	public:
 		Client();

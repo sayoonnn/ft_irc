@@ -148,8 +148,9 @@ void	Channel::setTopic(std::string& to, std::string& who)
 		_topic = to;
 	_whoTopic = who;
 
-	time_t tmp = std::time(0);
-	_topicTimestamp = std::ctime(&tmp);
+	std::stringstream ss;
+	ss << std::time(0);
+	ss >> _topicTimestamp;
 }
 
 std::string	Channel::getTopic() const
