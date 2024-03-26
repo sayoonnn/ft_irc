@@ -20,7 +20,7 @@ void Server::INVITE(std::deque<std::string> &parsedCmd, Client &client) {
 	}
 	// 2. check if client is in channel
 	if (_channels[channelName]->isClientIn(client.getSocket()) == 0) {
-		sendMessageToClient(client.getSocket(), ERR_NOTONCHANNEL(client.getUsername(), client.getNickname(), channelName));
+		sendMessageToClient(client.getSocket(), ERR_NOTONCHANNEL(client.getNickname(), channelName));
 		return ;
 	}
 	// // 3. check if client is operator

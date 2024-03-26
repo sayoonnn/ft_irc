@@ -29,7 +29,7 @@
 #define ERR_ERRONEUSNICKNAME(nickname, newname)				(":ircserv 432 " + (nickname) + " " + (newname) + " :Erroneus nickname\n")
 #define ERR_NICKNAMEINUSE(realname, nickname)				(":ircserv 433 " + (realname) + " " + (nickname) + " :Nickname is already in use\n")
 #define ERR_USERNOTINCHANNEL(username, nickname, channel)	(":ircserv 441 " + (username) + " " + (nickname) + " " + (channel) + " :They aren't on that channel\n")
-#define ERR_NOTONCHANNEL(username, nickname, channel)		(":ircserv 442 " + (username) + " " + (nickname) + " " + (channel) + " :They aren't on that channel\n")
+#define ERR_NOTONCHANNEL(nickname, channel)	            	(":ircserv 442 " + (nickname) + " " + (channel) + " :You're not on that channel\r\n")
 #define ERR_USERONCHANNEL(username, nickname, channel)		(":ircserv 443 " + (username) + " " + (nickname) + " " + (channel) + " :is already on channel\n")
 #define ERR_NOTREGISTERED(realname)							(":ircserv 451 " + (realname) + " :You have not registered\n")
 #define ERR_NEEDMOREPARAMS(nickname, command)				(":ircserv 461 " + (nickname) + " " + (command) + " :Not enough parameters\n")
