@@ -8,38 +8,45 @@ void Server::NICK(std::deque<std::string> &parsedCmd, Client &client) {
 		sendMessageToClient(client.getSocket(), ERR_NEEDMOREPARAMS(client.getNickname(), "NICK"));
 		return ;
 	}
+	
+	std::string newNick = parsedCmd[1];
+	std::string oldNick = client.getNickname();
 
-	std::map<int, Client *>::iterator socketIt = _clients.begin();
-
-	for (; socketIt != _clients.end(); socketIt++) {
-		if ((*socketIt).second->getNickname() == parsedCmd[1] && (*socketIt).second != &client) {
-			sendMessageToClient(client.getSocket(), ERR_NICKNAMEINUSE(client.getUsername(), parsedCmd[1]));
-			return ;
-		}
-	}
-
-	if (parsedCmd[1].find(" ") != std::string::npos || parsedCmd[1].find("&") != std::string::npos ||
-	parsedCmd[1].find("#") != std::string::npos || parsedCmd[1].find(",") != std::string::npos) {
-		sendMessageToClient(client.getSocket(), ERR_ERRONEUSNICKNAME(client.getNickname(), parsedCmd[1]));
+	if (_clientsNick.find(newNick) != _clientsNick.end()) {
+		sendMessageToClient(client.getSocket(), ERR_NICKNAMEINUSE(client.getUsername(), newNick));
 		return ;
 	}
 
-	std::map<std::string, Client *>::iterator nickIt = _clientsNick.find(client.getNickname());
-
-	if (nickIt == _clientsNick.end())
-		_clientsNick[parsedCmd[1]] = &client;
-	else {
-		_clientsNick.erase(nickIt);
-		_clientsNick[parsedCmd[1]] = &client;
-		std::string tmp = ":" + client.getNickname() + " NICK " + parsedCmd[1] + "\n"; 
-		sendMessageToClient(client.getSocket(), tmp);
+	if (newNick.find(" ") != std::string::npos || newNick.find("&") != std::string::npos ||
+	newNick.find("#") != std::string::npos || newNick.find(",") != std::string::npos) {
+		sendMessageToClient(client.getSocket(), ERR_ERRONEUSNICKNAME(oldNick, newNick));
+		return ;
 	}
 
-	client.setNickname(parsedCmd[1]);
+	std::map<std::string, Client *>::iterator nickIt = _clientsNick.find(oldNick);
+
+	if (nickIt == _clientsNick.end())
+		_clientsNick[newNick] = &client;
+	else {
+		_clientsNick.erase(nickIt);
+		_clientsNick[newNick] = &client;
+		sendMessageToClient(client.getSocket(), RPL_NICK(newNick, oldNick));
+	}
+
+	std::map<std::string, Channel *> joinedChannel = client.getChannels();
+	std::cout << joinedChannel.size() << std::endl;
+	std::map<std::string, Channel *>::iterator chanIt = joinedChannel.begin();
+
+	std::list<int> fds;
+	fds.push_back(client.getSocket());
+
+	for (; chanIt != joinedChannel.end(); chanIt++)
+		sendMessageToChannel(*(chanIt->second), RPL_NICK(newNick, oldNick), fds);
+
+	client.setNickname(newNick);
 
 	if (client.isPassed() && client.getUsername() != "" && !client.isRegistered()) {
 		client.setRegistered();
 		sayHelloToClient(client);
 	}
 }
-

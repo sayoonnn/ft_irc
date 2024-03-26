@@ -38,6 +38,8 @@ class Client {
 		std::string getUsername() const;
 		std::string getRealname() const;
 		std::string getIpAddr() const;
+
+		void joinChannel(std::string, Channel *);
 		std::map<std::string, Channel *>	getChannels() const;
 		std::deque<std::string>				getInvited() const;
 		std::string getBuffer() const;

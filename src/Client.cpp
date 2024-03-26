@@ -33,6 +33,8 @@ std::string Client::getRealname() const { return (_realname); }
 
 std::string Client::getIpAddr() const { return (_ipAddr); }
 
+void Client::joinChannel(std::string chanName, Channel *channel) { _channels[chanName] = channel; }
+
 std::map<std::string, Channel *> Client::getChannels() const { return (_channels); }
 
 std::deque<std::string> Client::getInvited() const { return (_invited); }
@@ -51,8 +53,6 @@ void Client::setUsername(std::string username) { _username = username; }
 
 void Client::setRealname(std::string realname) { _realname = realname; }
 
-
-#include <iostream>
 void Client::setIpAddr() {
 
 	struct sockaddr_in addr;
@@ -61,7 +61,6 @@ void Client::setIpAddr() {
 	getsockname(_socket, (sockaddr *)&addr, &addrSize);
 
 	_ipAddr = std::string(inet_ntoa(addr.sin_addr));
-	std::cout << _ipAddr << std::endl;
 }
 
 void Client::setBuffer(std::string string) { _buffer = string; }

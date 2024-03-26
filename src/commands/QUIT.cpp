@@ -2,8 +2,8 @@
 #include "Server.hpp"
 #include "RPL.hpp"
 
-#define _QUIT(nickname, username, reason)			(":" + (nickname) + "!~" + (username) + "@localhost QUIT :" + (reason))
-#define CLOSING_LINK(nickname, username, reason)		(": ERRIR :Closing Link: " + (nickname) + "[~" + (username) + "@localhost] (" + (reason) + ")")
+#define _QUIT(nickname, username, reason)			(":" + (nickname) + "!~" + (username) + "@localhost QUIT :" + (reason) + "\n")
+#define CLOSING_LINK(nickname, username, reason)		(": ERROR :Closing Link: " + (nickname) + "[~" + (username) + "@localhost] (" + (reason) + ")\n")
 
 void Server::QUIT(std::deque<std::string> &parsedCmd, Client &client) {
 

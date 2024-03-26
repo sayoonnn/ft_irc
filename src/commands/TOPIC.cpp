@@ -25,7 +25,7 @@ void	Server::TOPIC(std::deque<std::string> &parsedCmd, Client &client)
 	channel = chaIter->second;
 	if (channel->isClientIn(fd) == 0)
 	{
-		sendMessageToClient(fd, ERR_NOTONCHANNEL(client.getUsername(), client.getNickname(), parsedCmd[1]));
+		sendMessageToClient(fd, ERR_NOTONCHANNEL(client.getNickname(), parsedCmd[1]));
 		return ;
 	}
 

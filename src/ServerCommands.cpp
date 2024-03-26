@@ -48,7 +48,12 @@ void Server::excuteCommands(Client& client)
 
 		cmdType = parsedCmd[0];
 
-		if (client.isRegistered()) {
+		if (cmdType == "QUIT") {
+			removeClient(client.getSocket());
+			QUIT(parsedCmd, client);
+			return ;
+		}
+		else if (client.isRegistered()) {
 
 			if (_cmdMap.find(cmdType) == _cmdMap.end())
 				sendMessageToClient(client.getSocket(), ERR_UNKNOWNCOMMAND(client.getNickname(), parsedCmd[0]));

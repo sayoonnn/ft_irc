@@ -22,7 +22,7 @@ void Server::INVITE(std::deque<std::string> &parsedCmd, Client &client) {
 	
 	// 2. check if client is in channel
 	if (_channels[channelName]->isClientIn(client.getSocket()) == 0) {
-		sendMessageToClient(client.getSocket(), ERR_NOTONCHANNEL(client.getUsername(),client.getNickname(), channelName));
+		sendMessageToClient(client.getSocket(), ERR_NOTONCHANNEL(client.getNickname(), channelName));
 		return ;
 	}
 	
@@ -54,5 +54,5 @@ void Server::INVITE(std::deque<std::string> &parsedCmd, Client &client) {
 		nickClient.getInvited().push_back(channelName);
 	// 6. invite nickname to channel
 	sendMessageToClient(client.getSocket(), RPL_INVITING(client.getNickname(), nickname, channelName));
-	sendMessageToClient(client.getSocket(), ":" + client.getNickname() + "!" + client.getUsername() + "@localhost INVITE " + nickname + " :" + channelName + "\r\n");
+	sendMessageToClient(client.getSocket(), ":" + client.getNickname() + "!" + client.getUsername() + "@localhost INVITE " + nickname + " :" + channelName + "\n");
 }

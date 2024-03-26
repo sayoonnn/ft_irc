@@ -7,6 +7,9 @@
 #define RPL_CREATED(nickname, datetime)						(":ircserv 003 " + (nickname) + " :This server was created " + (datetime)  + "\n")
 #define RPL_MYINFO(nickname)								(":ircserv 004 " + (nickname) + " :ircserv 1.0 aw abeiIklmnoOt\n")
 
+
+#define RPL_NICK(newnick, oldnick)							(":" + (oldnick) + " NICK " + (newnick) + "\n")
+
 #define RPL_NOTOPIC(client, channel)						(":ircserv 331 " + (client) + " " + (channel) + " :No topic is set\n")
 #define RPL_TOPIC(client, channel, topic)					(":ircserv 332 " + (client) + " " + (channel) + " :" + (topic) + "\n")
 #define RPL_TOPICWHOTIME(client, channel, nick, setat)		(":ircserv 333 " + (client) + " " + (channel) + " " + (setat) + "\n")
@@ -16,6 +19,7 @@
 #define RPL_MOTD(nickname, line)							(":ircserv 372 " + (nickname) + " : " + (line) + "\n")
 #define RPL_MOTDSTART(nickname)								(":ircserv 375 " + (nickname) + " :- ircserv Message of the day - \n")
 #define RPL_ENDOFMOTD(nickname)								(":ircserv 376 " + (nickname) + " :End of MOTD command.\n")
+#define RPL_CHANNELMODEIS(nick, channel, mode)              (":ircserv 324 " + (nick) + " " + (channel) + " " + (mode) + "\n")
 
 
 // errors
@@ -28,7 +32,7 @@
 #define ERR_ERRONEUSNICKNAME(nickname, newname)				(":ircserv 432 " + (nickname) + " " + (newname) + " :Erroneus nickname\n")
 #define ERR_NICKNAMEINUSE(realname, nickname)				(":ircserv 433 " + (realname) + " " + (nickname) + " :Nickname is already in use\n")
 #define ERR_USERNOTINCHANNEL(username, nickname, channel)	(":ircserv 441 " + (username) + " " + (nickname) + " " + (channel) + " :They aren't on that channel\n")
-#define ERR_NOTONCHANNEL(username, nickname, channel)		(":ircserv 442 " + (username) + " " + (nickname) + " " + (channel) + " :They aren't on that channel\n")
+#define ERR_NOTONCHANNEL(nickname, channel)	            	(":ircserv 442 " + (nickname) + " " + (channel) + " :You're not on that channel\n")
 #define ERR_USERONCHANNEL(username, nickname, channel)		(":ircserv 443 " + (username) + " " + (nickname) + " " + (channel) + " :is already on channel\n")
 #define ERR_NOTREGISTERED(realname)							(":ircserv 451 " + (realname) + " :You have not registered\n")
 #define ERR_NEEDMOREPARAMS(nickname, command)				(":ircserv 461 " + (nickname) + " " + (command) + " :Not enough parameters\n")
@@ -37,3 +41,5 @@
 #define ERR_CHANNELISFULL(nickname, channel)				(":ircserv 471 " + (nickname) + " " + (channel) + " :Cannot join channel (+l)\n")
 #define ERR_BADCHANMASK(channel)		        			(":ircserv 476 " + (channel) + " :Bad Channel Mask\n")
 #define ERR_CHANOPRIVSNEEDED(nickname, channel)				(":ircserv 482 " + (nickname) + " " + (channel) + " :You're not channel operator\n")
+#define ERR_UNKNOWNMODE(nickname, mode)			    (":ircserv 472 " + (nickname) + " " + (mode) + " :is unknown mode char to me\n")
+#define ERR_UMODEUNKNOWNFLAG(nickname)			    (":ircserv 501 " + (nickname) + " :Unknown MODE flag\n")
