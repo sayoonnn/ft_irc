@@ -58,7 +58,7 @@ void	Server::KICK(std::deque<std::string> &parsedCmd, Client &client)
 	send = ":" + client.getNickname() + "!" + client.getUsername() + "@localhost KICK " + parsedCmd[1] + " " + parsedCmd[2] + " :";
 	if (parsedCmd.size() >= 4)
 		send += parsedCmd[3];
-	send = "\n";
+	send += "\n";
 	sendMessageToClient(kickClient->getSocket(), send);
 	if (isNoClientInChannel(parsedCmd[1]) == 0)
 		sendMessageToChannel(*channel, send);
