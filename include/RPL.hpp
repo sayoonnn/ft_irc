@@ -7,6 +7,7 @@
 #define RPL_CREATED(nickname, datetime)							(":ircserv 003 " + (nickname) + " :This server was created " + (datetime)  + "\n")
 #define RPL_MYINFO(nickname)									(":ircserv 004 " + (nickname) + " :ircserv 1.0 aw abeiIklmnoOt\n")
 
+#define RPL_ERROR(message)										(":ircserv ERROR :" + (message) + "\n")
 #define RPL_PONG(message)										(":ircserv PONG " + (message) + "\n")
 #define RPL_PRIVMSG(nickname, username, target, message)		(":" + (nickname) + "!" + (username) + "@localhost PRIVMSG " + (target) + " :" + (message) + "\n")
 #define RPL_CHANGETOPIC(nickname, username, channel, topic)		(":" + (nickname) + "!" + (username) + "@localhost TOPIC " + (channel) + " :" + (topic) + "\n")

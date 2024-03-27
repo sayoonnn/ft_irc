@@ -3,7 +3,7 @@
 
 Client::Client(): _socket(-1), _nickname(""), _username(""), _realname(""), _isPassed(false), _isRegistered(false) {}
 
-Client::Client(int socket): _socket(socket) {}
+Client::Client(int socket): _socket(socket), _nickname(""), _username(""), _realname(""), _isPassed(false), _isRegistered(false)  {}
 
 Client::~Client() {}
 

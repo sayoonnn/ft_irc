@@ -80,13 +80,12 @@ class Server {
 		void sendMessageToChannel(Channel&, const std::string&);
 		int	isNoClientInChannel(const std::string&);
 
-		void PASS(std::deque<std::string>&, Client &);
+		bool PASS(std::deque<std::string>&, Client &);
 		void NICK(std::deque<std::string>&, Client &);
 		void USER(std::deque<std::string>&, Client &);
 		void PING(std::deque<std::string>&, Client &);
 		void QUIT(std::deque<std::string>&, Client &);
 		void JOIN(std::deque<std::string>&, Client &);
-		void WHO(std::deque<std::string>&, Client &);
 		void MODE(std::deque<std::string>&, Client &);
 		void INVITE(std::deque<std::string>&, Client &);
 		void KICK(std::deque<std::string>&, Client &);

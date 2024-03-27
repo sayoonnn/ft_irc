@@ -12,8 +12,7 @@ CMDS		=	INVITE.cpp\
 				PRIVMSG.cpp\
 				QUIT.cpp\
 				TOPIC.cpp\
-				USER.cpp\
-				WHO.cpp
+				USER.cpp
 
 SRC			=	Channel.cpp\
 				Client.cpp\
@@ -50,7 +49,7 @@ YELLOW		=	\033[1;33m
 RESET		=	\033[0m
 
 all:
-	@make $(NAME) -j4
+	@make $(NAME) -j8
 
 $(NAME): $(OBJ)
 	@$(CXX) $(CXXFLAGS) $(OBJ) -o $(NAME)

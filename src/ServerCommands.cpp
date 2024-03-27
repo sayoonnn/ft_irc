@@ -53,8 +53,12 @@ void Server::excuteCommands(Client& client)
 			removeClient(client.getSocket());
 			return ;
 		}
+		else if (cmdType == "PASS" && !PASS(parsedCmd, client)) {
+			removeClient(client.getSocket());
+			return ;
+		}
 		else if (client.isRegistered()) {
-			
+
 			if (_cmdMap.find(cmdType) == _cmdMap.end())
 				sendMessageToClient(client.getSocket(), ERR_UNKNOWNCOMMAND(client.getNickname(), parsedCmd[0]));
 			else
@@ -62,7 +66,7 @@ void Server::excuteCommands(Client& client)
 		}
 		else {
 
-			if (cmdType == "PASS" || ((cmdType == "NICK" || cmdType == "USER") && client.isPassed()))
+			if ((cmdType == "NICK" || cmdType == "USER") && client.isPassed())
 				(this->*_cmdMap[cmdType])(parsedCmd, client);
 			else if (_cmdMap.find(cmdType) != _cmdMap.end())
 				sendMessageToClient(client.getSocket(), ERR_NOTREGISTERED(client.getNickname()));

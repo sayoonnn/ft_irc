@@ -96,13 +96,11 @@ void Server::printClientLog(int clientNum, std::string logMsg) {
 
 void Server::makeCmdMap() {
 
-	_cmdMap["PASS"] = &Server::PASS;
 	_cmdMap["NICK"] = &Server::NICK;
 	_cmdMap["USER"] = &Server::USER;
 	_cmdMap["PING"] = &Server::PING;
 	_cmdMap["QUIT"] = &Server::QUIT;
 	_cmdMap["JOIN"] = &Server::JOIN;
-	_cmdMap["WHO"] = &Server::WHO;
 	_cmdMap["MODE"] = &Server::MODE;
 	_cmdMap["INVITE"] = &Server::INVITE;
 	_cmdMap["KICK"] = &Server::KICK;

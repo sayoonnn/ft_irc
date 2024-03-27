@@ -72,7 +72,7 @@ void Server::removeClientUnexpect(int clientSocket) {
 
 	tmp.push_back("QUIT");
 	tmp.push_back("EOF from client");
-	
+
 	QUIT(tmp, *_clients[clientSocket]);
 	removeClient(clientSocket);
 }
