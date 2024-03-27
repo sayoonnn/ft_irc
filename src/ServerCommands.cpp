@@ -54,7 +54,7 @@ void Server::excuteCommands(Client& client)
 			return ;
 		}
 		else if (client.isRegistered()) {
-
+			
 			if (_cmdMap.find(cmdType) == _cmdMap.end())
 				sendMessageToClient(client.getSocket(), ERR_UNKNOWNCOMMAND(client.getNickname(), parsedCmd[0]));
 			else
