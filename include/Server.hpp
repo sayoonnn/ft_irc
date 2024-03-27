@@ -38,7 +38,6 @@ class Server {
 		typedef	void (Server::*commandFunc)(std::deque<std::string>&, Client &);
 		std::map<std::string, commandFunc> _cmdMap;
 
-		int 				_servSocket;
 		int 				_servPort;
 		struct sockaddr_in	_servAddr;
 		std::string 		_password;
@@ -96,8 +95,11 @@ class Server {
 		void PART(std::deque<std::string>&, Client &);
 
 		void loadMOTD();
+		void handleSignal();
 
 	public:
+		static int 			_servSocket;
+
 		Server(char *, char *);
 		~Server();
 

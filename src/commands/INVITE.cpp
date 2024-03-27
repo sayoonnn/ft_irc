@@ -26,11 +26,11 @@ void Server::INVITE(std::deque<std::string> &parsedCmd, Client &client) {
 		return ;
 	}
 	
-	// // 3. check if client is operator
-	// if (_channels[channelName]->getOpers().find(client.getSocket()) == _channels[channelName]->getOpers().end()) {
-	// 	sendMessageToClient(client.getSocket(), ERR_CHANOPRIVSNEEDED(client.getNickname(), channelName));
-	// 	return ;
-	// }
+	// 3. check if client is operator
+	if (_channels[channelName]->isClientIn(client.getSocket()) == 1) {
+		sendMessageToClient(client.getSocket(), ERR_CHANOPRIVSNEEDED(client.getNickname(), channelName));
+		return ;
+	}
 	
 	std::string nickname = parsedCmd[1];
 	// 4. check if nickname to be invited to channel exists in server
@@ -52,7 +52,8 @@ void Server::INVITE(std::deque<std::string> &parsedCmd, Client &client) {
 		return ;
 	} else if (putInviteResult == 1)
 		nickClient.getInvitaion(channelName);
+
 	// 6. invite nickname to channel
-	sendMessageToClient(client.getSocket(), RPL_INVITING(client.getNickname(), nickname, channelName));
-	sendMessageToClient(client.getSocket(), ":" + client.getNickname() + "!" + client.getUsername() + "@localhost INVITE " + nickname + " :" + channelName + "\n");
+	sendMessageToClient(_clientsNick[nickname]->getSocket(), RPL_INVITING(client.getNickname(), nickname, channelName));
+	// sendMessageToClient(client.getSocket(), ":" + client.getNickname() + "!" + client.getUsername() + "@localhost INVITE " + nickname + " :" + channelName + "\n");
 }

@@ -2,14 +2,28 @@
 #include "Server.hpp"
 #include "Types.hpp"
 
+int Server::_servSocket = -1;
+
+void signalHandler(int sig) {
+
+	if (sig == SIGINT) {
+		std::cout << BLUE << std::right << std::setw(13) << "SERVER ! ";
+		std::cout << "closing Server..." << "\n" << RESET;
+		close(Server::_servSocket);
+		exit(0);
+	}
+
+}
+
 Server::Server(char *port, char *password)
-: _servSocket(-1), _password(password), _kqueue(-1)
+: _password(password), _kqueue(-1)
 {
 	printServerLog("setup");
 	openServerSocket(port);
 	makeKqueueReady();
 	makeCmdMap();
 	loadMOTD();
+	handleSignal();
 }
 
 Server::~Server() {
@@ -122,4 +136,15 @@ void Server::loadMOTD() {
 		_MOTD.push_back(buffer);
 
 	tmp.close();
+}
+
+void Server::handleSignal() {
+
+	struct sigaction sa;
+
+	sa.sa_handler = &signalHandler;
+	sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+
+    sigaction(SIGINT, &sa, NULL);
 }

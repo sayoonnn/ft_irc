@@ -75,6 +75,12 @@ int Server::recvMessageFromClient(int clientSocket) {
 	length = recv(clientSocket, buffer, BUFFER_SIZE - 1, 0);
 
 	if (length <= 0) {
+		std::deque<std::string> tmp;
+
+		tmp.push_back("QUIT");
+		tmp.push_back("EOF from client");
+		
+		QUIT(tmp, *_clients[clientSocket]);
 		removeClient(clientSocket);
 		return (FAIL);
 	}
