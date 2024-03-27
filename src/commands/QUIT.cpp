@@ -29,5 +29,7 @@ void Server::QUIT(std::deque<std::string> &parsedCmd, Client &client) {
 		if (isNoClientInChannel(iterChannel->first) == 0)
 			sendMessageToChannel(*cha, RPL_QUIT(nickname, username, reason), fds);
 	}
-	sendMessageToClient(client.getSocket(), ERR_CLOSELINK(nickname, username, reason));
+	
+	if (reason != "EOF from client")
+		sendMessageToClient(client.getSocket(), ERR_CLOSELINK(nickname, username, reason));
 }
