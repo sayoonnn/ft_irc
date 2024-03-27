@@ -29,7 +29,6 @@
 #define RPL_ENDOFMOTD(nickname)									(":ircserv 376 " + (nickname) + " :End of MOTD command.\n")
 #define RPL_CHANNELMODEIS(nick, channel, mode)					(":ircserv 324 " + (nick) + " " + (channel) + " " + (mode) + "\n")
 
-
 // errors
 #define ERR_NOSUCHNICK(nickname, nickname2)						(":ircserv 401 " + (nickname) + " " + (nickname2) + " :No such nick/channel\n")
 #define ERR_NOSUCHCHANNEL(nickname, channel)					(":ircserv 403 " + (nickname) + " " + (channel) + " :No such channel\n")
@@ -37,6 +36,7 @@
 #define ERR_TOOMANYCHANNELS(nickname, channel)					(":ircserv 405 " + (nickname) + " " + (channel) + " :You have joined too many channels\n")
 #define ERR_NOTEXTTOSEND(nickname)								(":ircserv 412 " + (nickname) + " :No text to send\n")
 #define ERR_UNKNOWNCOMMAND(nickname, command)					(":ircserv 421 " + (nickname) + " " + (command) + " :Unknown command\n")
+#define ERR_NONICKNAMEGIVEN(username)							(":ircserv 431 " + (username) + " :No nickname given\n")
 #define ERR_ERRONEUSNICKNAME(nickname, newname)					(":ircserv 432 " + (nickname) + " " + (newname) + " :Erroneus nickname\n")
 #define ERR_NICKNAMEINUSE(realname, nickname)					(":ircserv 433 " + (realname) + " " + (nickname) + " :Nickname is already in use\n")
 #define ERR_USERNOTINCHANNEL(username, nickname, channel)		(":ircserv 441 " + (username) + " " + (nickname) + " " + (channel) + " :They aren't on that channel\n")

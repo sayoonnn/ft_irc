@@ -2,10 +2,27 @@
 #include "Server.hpp"
 #include "RPL.hpp"
 
+static bool checkNickname(std::string nick) {
+	
+	std::string notAllow(" &#:,");
+
+	for (size_t i = 0; i < nick.size(); i++) {
+		if (notAllow.find(nick[i]) != std::string::npos)
+			return (false);
+	}
+
+	return (true);
+}
+
 void Server::NICK(std::deque<std::string> &parsedCmd, Client &client) {
 
+	std::string username("*");
+
+	if (client.getUsername() != "")
+		username = client.getUsername();
+
 	if (parsedCmd.size() < 2) {
-		sendMessageToClient(client.getSocket(), ERR_NEEDMOREPARAMS(client.getNickname(), "NICK"));
+		sendMessageToClient(client.getSocket(), ERR_NONICKNAMEGIVEN(username));
 		return ;
 	}
 	
@@ -13,12 +30,11 @@ void Server::NICK(std::deque<std::string> &parsedCmd, Client &client) {
 	std::string oldNick = client.getNickname();
 
 	if (_clientsNick.find(newNick) != _clientsNick.end()) {
-		sendMessageToClient(client.getSocket(), ERR_NICKNAMEINUSE(client.getUsername(), newNick));
+		sendMessageToClient(client.getSocket(), ERR_NICKNAMEINUSE(username, newNick));
 		return ;
 	}
 
-	if (newNick.find(" ") != std::string::npos || newNick.find("&") != std::string::npos ||
-	newNick.find("#") != std::string::npos || newNick.find(",") != std::string::npos) {
+	if (!checkNickname(newNick)) {
 		sendMessageToClient(client.getSocket(), ERR_ERRONEUSNICKNAME(oldNick, newNick));
 		return ;
 	}
