@@ -34,4 +34,5 @@
 .vscode
 .objs
 
+.DS_Store
 ircserv
