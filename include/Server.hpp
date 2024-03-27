@@ -42,7 +42,6 @@ class Server {
 		struct sockaddr_in	_servAddr;
 		std::string 		_password;
 
-		int					_kqueue;
 		struct kevent 		_eventSetting;
 		struct kevent		_eventList[EVENT_SIZE];
 
@@ -63,6 +62,7 @@ class Server {
 
 		void acceptClient();
 		void removeClient(int);
+		void removeClientUnexpect(int);
 
 		void sayHelloToClient(Client &);
 		int recvMessageFromClient(int);
@@ -99,6 +99,7 @@ class Server {
 
 	public:
 		static int 			_servSocket;
+		static int			_kqueue;
 
 		Server(char *, char *);
 		~Server();

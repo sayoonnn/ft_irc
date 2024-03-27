@@ -66,6 +66,17 @@ void Server::removeClient(int clientSocket) {
 	delete iterClients->second;
 }
 
+void Server::removeClientUnexpect(int clientSocket) {
+	
+	std::deque<std::string> tmp;
+
+	tmp.push_back("QUIT");
+	tmp.push_back("EOF from client");
+	
+	QUIT(tmp, *_clients[clientSocket]);
+	removeClient(clientSocket);
+}
+
 int Server::recvMessageFromClient(int clientSocket) {
 
 	int length;
@@ -75,13 +86,7 @@ int Server::recvMessageFromClient(int clientSocket) {
 	length = recv(clientSocket, buffer, BUFFER_SIZE - 1, 0);
 
 	if (length <= 0) {
-		std::deque<std::string> tmp;
-
-		tmp.push_back("QUIT");
-		tmp.push_back("EOF from client");
-		
-		QUIT(tmp, *_clients[clientSocket]);
-		removeClient(clientSocket);
+		removeClientUnexpect(clientSocket);
 		return (FAIL);
 	}
 
@@ -105,7 +110,7 @@ void Server::sendMessageToClient(int clientSocket, std::string message) {
 
 	printServerLog(message);
 	n = send(clientSocket, message.c_str(), message.size(), 0);
-	if (n < 0)
-		closeServer("cannot send message to client");
+	if (n <= 0)
+		removeClientUnexpect(clientSocket);
 }
 

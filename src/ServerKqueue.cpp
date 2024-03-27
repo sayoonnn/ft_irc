@@ -30,7 +30,7 @@ void Server::addClientKq(int clientSocket) {
 void Server::removeClientKq(int clientSocket) {
 
 	std::memset(&_eventSetting, 0, sizeof(_eventSetting));
-	EV_SET(&_eventSetting, clientSocket, EVFILT_READ, EV_DISABLE, 0, 0, NULL);
+	EV_SET(&_eventSetting, clientSocket, EVFILT_READ, EV_DELETE, 0, 0, NULL);
 
 	int ret = kevent(_kqueue, &_eventSetting, 1, NULL, 0, NULL);
 	if (ret == FAIL)

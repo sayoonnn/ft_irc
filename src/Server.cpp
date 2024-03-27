@@ -3,6 +3,7 @@
 #include "Types.hpp"
 
 int Server::_servSocket = -1;
+int Server::_kqueue = -1;
 
 void signalHandler(int sig) {
 
@@ -10,13 +11,14 @@ void signalHandler(int sig) {
 		std::cout << BLUE << std::right << std::setw(13) << "SERVER ! ";
 		std::cout << "closing Server..." << "\n" << RESET;
 		close(Server::_servSocket);
+		close(Server::_kqueue);
 		exit(0);
 	}
 
 }
 
 Server::Server(char *port, char *password)
-: _password(password), _kqueue(-1)
+: _password(password)
 {
 	printServerLog("setup");
 	openServerSocket(port);
