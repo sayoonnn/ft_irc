@@ -53,7 +53,7 @@ all:
 	@make $(NAME) -j4
 
 $(NAME): $(OBJ)
-	@$(CXX) $(CXXFLAGS) $(OBJ) -o $(NAME) -fsanitize=address
+	@$(CXX) $(CXXFLAGS) $(OBJ) -o $(NAME)
 	@echo $(NAME) DONE ✅
 
 $(OBJDIR):

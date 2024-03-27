@@ -34,7 +34,6 @@ void Server::NICK(std::deque<std::string> &parsedCmd, Client &client) {
 	}
 
 	std::map<std::string, Channel *> joinedChannel = client.getChannels();
-	std::cout << joinedChannel.size() << std::endl;
 	std::map<std::string, Channel *>::iterator chanIt = joinedChannel.begin();
 
 	std::list<int> fds;

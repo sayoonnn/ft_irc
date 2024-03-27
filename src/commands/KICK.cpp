@@ -12,7 +12,7 @@ void	Server::KICK(std::deque<std::string> &parsedCmd, Client &client)
 	int			fd = client.getSocket();
 	Client*		kickClient;
 	Channel*	channel;
-	std::string	send;
+	std::string	reason = "";
 
 	if (parsedCmd.size() < 3)
 	{
@@ -55,12 +55,9 @@ void	Server::KICK(std::deque<std::string> &parsedCmd, Client &client)
 	}
 	kickClient->partChannel(parsedCmd[1]);
 
-	send = ":" + client.getNickname() + "!" + client.getUsername() + "@localhost KICK " + parsedCmd[1] + " " + parsedCmd[2] + " :";
 	if (parsedCmd.size() >= 4)
-		send += parsedCmd[3];
-	send += "\n";
-	sendMessageToClient(kickClient->getSocket(), send);
+		reason = parsedCmd[3];
+	sendMessageToClient(kickClient->getSocket(), RPL_KICK(client.getNickname(), client.getUsername(), parsedCmd[1], parsedCmd[2], reason));
 	if (isNoClientInChannel(parsedCmd[1]) == 0)
-		sendMessageToChannel(*channel, send);
+		sendMessageToChannel(*channel, RPL_KICK(client.getNickname(), client.getUsername(), parsedCmd[1], parsedCmd[2], reason));
 }
-

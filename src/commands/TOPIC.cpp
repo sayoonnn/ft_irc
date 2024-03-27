@@ -36,10 +36,8 @@ void	Server::TOPIC(std::deque<std::string> &parsedCmd, Client &client)
 			sendMessageToClient(fd, ERR_CHANOPRIVSNEEDED(client.getNickname(), parsedCmd[1]));
 			return ;
 		}
-		send = ":" + client.getNickname();
 		channel->setTopic(parsedCmd[2], send);
-		send += " TOPIC " + parsedCmd[1] + " :" + parsedCmd[2] + "\n";
-		sendMessageToChannel(*channel, send);
+		sendMessageToChannel(*channel, RPL_CHANGETOPIC(client.getNickname(), client.getUsername(), parsedCmd[1], parsedCmd[2]));
 	}
 	else
 	{

@@ -9,6 +9,6 @@ void Server::PING(std::deque<std::string> &parsedCmd, Client &client) {
 		return ;
 	}
 
-	sendMessageToClient(client.getSocket(), ":ircserv PONG " + parsedCmd[1] + "\n");
+	sendMessageToClient(client.getSocket(), RPL_PONG(parsedCmd[1]));
 }
 

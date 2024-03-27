@@ -26,13 +26,11 @@ void	Server::PART(std::deque<std::string> &parsedCmd, Client &client)
 	}
 	client.partChannel(parsedCmd[1]);
 
-	std::string	send;
+	std::string	reason = "";
 
-	send = ":" + client.getNickname() + "!" + client.getUsername() + "@localhost PART " + chaName + " :";
 	if (parsedCmd.size() >= 3)
-		send += parsedCmd[2];
-	send += "\n";
-	sendMessageToClient(client.getSocket(), send);
+		reason = parsedCmd[2];
+	sendMessageToClient(client.getSocket(), RPL_PART(client.getNickname(), client.getUsername(), chaName, reason));
 	if (isNoClientInChannel(parsedCmd[1]) == 0)
-		sendMessageToChannel(*channel, send);
+		sendMessageToChannel(*channel, RPL_PART(client.getNickname(), client.getUsername(), chaName, reason));
 }

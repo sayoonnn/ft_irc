@@ -23,7 +23,7 @@ void	Server::PRIVMSG(std::deque<std::string> &parsedCmd, Client &client)
 	target = splitComma(parsedCmd[1]);
 	if (target.size() != 0)
 		type = target[0];
-	send = ":" + client.getNickname() + "!" + client.getUsername() + "@localhost" + " PRIVMSG " + target + " :" + parsedCmd[2] + "\n";
+	send = RPL_PRIVMSG(client.getNickname(), client.getUsername(), target, parsedCmd[2]);
 	if (type == '#')
 	{
 		std::map<std::string, Channel *>::iterator	chaIter = _channels.find(target);
