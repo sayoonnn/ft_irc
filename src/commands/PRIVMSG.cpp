@@ -52,8 +52,6 @@ void	Server::PRIVMSG(std::deque<std::string> &parsedCmd, Client &client)
 			return ;
 		}
 		Client *other = cliIter->second;
-		if (other->getSocket() == fd)
-			return ;
 		sendMessageToClient(other->getSocket(), send);
 	}
 }
