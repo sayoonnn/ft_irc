@@ -6,6 +6,7 @@
 #define RPL_YOURHOST(nickname)									(":ircserv 002 " + (nickname) + " :Your host is ircserv, running version 1.0\n")
 #define RPL_CREATED(nickname, datetime)							(":ircserv 003 " + (nickname) + " :This server was created " + (datetime)  + "\n")
 #define RPL_MYINFO(nickname)									(":ircserv 004 " + (nickname) + " :ircserv 1.0 aw abeiIklmnoOt\n")
+#define RPL_ISUPPORT(nickname)									(":ircserv 005 " + (nickname) + " CHANLIMIT=#:50 CHANMODES=,o,itkl, MAXTARGETS=1 MODES=1 TARGMAX=1 :are supported by this server\n")
 
 #define RPL_ERROR(message)										(":ircserv ERROR :" + (message) + "\n")
 #define RPL_PONG(message)										(":ircserv PONG " + (message) + "\n")

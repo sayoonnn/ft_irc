@@ -20,9 +20,12 @@ void	Server::PRIVMSG(std::deque<std::string> &parsedCmd, Client &client)
 		sendMessageToClient(fd, ERR_NOTEXTTOSEND(client.getNickname()));
 		return ;
 	}
-	target = splitComma(parsedCmd[1]);
-	if (target.size() != 0)
-		type = target[0];
+
+	target = parsedCmd[1];
+	
+	if (target.find(",") != std::string::npos)
+		target = target.substr(0, target.find(","));
+
 	send = RPL_PRIVMSG(client.getNickname(), client.getUsername(), target, parsedCmd[2]);
 	if (type == '#')
 	{

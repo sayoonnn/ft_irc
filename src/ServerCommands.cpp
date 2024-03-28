@@ -1,34 +1,8 @@
 
 #include "Server.hpp"
 #include "RPL.hpp"
+#include "Utils.hpp"
 
-void  Server::parseCommand(std::string str, std::deque<std::string> &parsedCmd) {
-
-	std::string colonArg;
-
-	if (str.find(":") != std::string::npos) {
-		colonArg = str.substr(str.find(":") + 1, str.size());
-		str = str.substr(0, str.find(":"));
-	}
-
-	std::stringstream ss(str);
-	std::string tmp;
-
-	while (ss >> tmp)
-		parsedCmd.push_back(tmp);
-	
-	if (colonArg != "")
-		parsedCmd.push_back(colonArg);
-}
-
-void Server::parseByChar(std::string target, char delimeter, std::deque<std::string> &commands) {
-
-	std::stringstream ss(target);
-	std::string tmp;
-
-	while (std::getline(ss, tmp, delimeter))
-		commands.push_back(tmp);
-}
 
 void Server::excuteCommands(Client& client)
 {
@@ -36,12 +10,12 @@ void Server::excuteCommands(Client& client)
 	std::deque<std::string>		parsedCmd;
 	std::string					cmdType;
 
-	parseByChar(client.getBuffer(), '\n', commands);
+	util::parseByChar(client.getBuffer(), '\n', commands);
 
 	for (size_t i = 0; i < commands.size(); i++) {
 
 		printClientLog(client.getSocket(), commands[i]);
-		parseCommand(commands[i], parsedCmd);
+		util::parseCommand(commands[i], parsedCmd);
 
 		if (parsedCmd.size() == 0)
 			continue ;
@@ -88,28 +62,12 @@ void Server::sayHelloToClient(Client &client) {
 	sendMessageToClient(clientSocket, RPL_YOURHOST(nickname));
 	sendMessageToClient(clientSocket, RPL_CREATED(nickname, "2024-03-31"));
 	sendMessageToClient(clientSocket, RPL_MYINFO(nickname));
+	sendMessageToClient(clientSocket, RPL_ISUPPORT(nickname));
 	
 	sendMessageToClient(clientSocket, RPL_MOTDSTART(nickname));
 	for (size_t i = 0; i < _MOTD.size(); i++)
 		sendMessageToClient(clientSocket, RPL_MOTD(nickname, _MOTD[i]));
 	sendMessageToClient(clientSocket, RPL_ENDOFMOTD(nickname));
-}
-
-
-std::string	Server::splitComma(const std::string str)
-{
-	size_t	start = 0;
-	size_t	i = 0;
-
-	for (; i < str.size() && str[i] != '\n' && str[i] != '\r'; ++ i)
-	{
-		if (str[i] == ',')
-		{
-			if (start < i)
-				return (str.substr(start, i - start));
-		}
-	}
-	return (str.substr(start, i - start));
 }
 
 void	Server::sendMessageToChannel(Channel& channel, const std::string& message, std::list<int>& mask)

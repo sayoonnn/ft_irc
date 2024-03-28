@@ -2,6 +2,7 @@
 #include "Server.hpp"
 #include "Types.hpp"
 #include "RPL.hpp"
+#include "Utils.hpp"
 
 void Server::openServerSocket(char *port) {
 
@@ -9,7 +10,7 @@ void Server::openServerSocket(char *port) {
 	double tmp;
 
 	ss >> tmp;
-	if (ss.fail())
+	if (ss.fail() || !util::isAlNum(std::string(port)))
 		closeServer("invalid port number");
 
 	_servPort = static_cast<int>(tmp);

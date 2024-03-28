@@ -11,7 +11,12 @@ void	Server::PART(std::deque<std::string> &parsedCmd, Client &client)
 		sendMessageToClient(client.getSocket(), ERR_NEEDMOREPARAMS(client.getNickname(), "PART"));
 		return ;
 	}
-	std::string	chaName = splitComma(parsedCmd[1]);
+
+	std::string	chaName = parsedCmd[1];
+	
+	if (chaName.find(",") != std::string::npos)
+		chaName = chaName.substr(0, chaName.find(","));
+
 	chaIter = _channels.find(chaName);
 	if (chaIter == _channels.end())
 	{

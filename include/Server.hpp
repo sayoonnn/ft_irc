@@ -72,10 +72,7 @@ class Server {
 		void printClientLog(int, std::string);
 
 		void excuteCommands(Client&);
-		void parseCommand(std::string, std::deque<std::string>&);
-		void parseByChar(std::string, char, std::deque<std::string>&);
 
-		std::string splitComma(const std::string);
 		void sendMessageToChannel(Channel&, const std::string&, std::list<int>&);
 		void sendMessageToChannel(Channel&, const std::string&);
 		int	isNoClientInChannel(const std::string&);
@@ -95,6 +92,7 @@ class Server {
 
 		void loadMOTD();
 		void handleSignal();
+		void setPassword(char *);
 
 	public:
 		static int 			_servSocket;
