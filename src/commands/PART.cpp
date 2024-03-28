@@ -13,7 +13,7 @@ void	Server::PART(std::deque<std::string> &parsedCmd, Client &client)
 	}
 
 	std::string	chaName = parsedCmd[1];
-	
+
 	if (chaName.find(",") != std::string::npos)
 		chaName = chaName.substr(0, chaName.find(","));
 
@@ -35,7 +35,7 @@ void	Server::PART(std::deque<std::string> &parsedCmd, Client &client)
 
 	if (parsedCmd.size() >= 3)
 		reason = parsedCmd[2];
-	sendMessageToClient(client.getSocket(), RPL_PART(client.getNickname(), client.getUsername(), chaName, reason));
+	sendMessageToClient(client.getSocket(), RPL_PART(client.getClientInfo(), chaName, reason));
 	if (isNoClientInChannel(parsedCmd[1]) == 0)
-		sendMessageToChannel(*channel, RPL_PART(client.getNickname(), client.getUsername(), chaName, reason));
+		sendMessageToChannel(*channel, RPL_PART(client.getClientInfo(), chaName, reason));
 }

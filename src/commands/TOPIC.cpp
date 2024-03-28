@@ -37,7 +37,7 @@ void	Server::TOPIC(std::deque<std::string> &parsedCmd, Client &client)
 			return ;
 		}
 		channel->setTopic(parsedCmd[2], send);
-		sendMessageToChannel(*channel, RPL_CHANGETOPIC(client.getNickname(), client.getUsername(), parsedCmd[1], parsedCmd[2]));
+		sendMessageToChannel(*channel, RPL_CHANGETOPIC(client.getClientInfo(), parsedCmd[1], parsedCmd[2]));
 	}
 	else
 	{

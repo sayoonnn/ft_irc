@@ -33,6 +33,13 @@ std::string Client::getRealname() const { return (_realname); }
 
 std::string Client::getIpAddr() const { return (_ipAddr); }
 
+std::string Client::getClientInfo() const {
+
+	return (":" + _nickname + "!" + _username + "@" + _ipAddr);
+	
+}
+
+
 void Client::joinChannel(std::string chanName, Channel *channel) { _channels[chanName] = channel; }
 
 void Client::partChannel(std::string chanName) {

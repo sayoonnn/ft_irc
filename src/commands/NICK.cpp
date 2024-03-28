@@ -56,7 +56,7 @@ void Server::NICK(std::deque<std::string> &parsedCmd, Client &client) {
 	fds.push_back(client.getSocket());
 
 	for (; chanIt != joinedChannel.end(); chanIt++)
-		sendMessageToChannel(*(chanIt->second), RPL_NICK(newNick, oldNick), fds);
+		sendMessageToChannel(*(chanIt->second), RPL_NICK(client.getClientInfo(), oldNick), fds);
 
 	client.setNickname(newNick);
 

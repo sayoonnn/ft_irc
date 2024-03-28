@@ -28,7 +28,7 @@ void	Server::PRIVMSG(std::deque<std::string> &parsedCmd, Client &client)
 
 	type = target[0];
 
-	send = RPL_PRIVMSG(client.getNickname(), client.getUsername(), target, parsedCmd[2]);
+	send = RPL_PRIVMSG(client.getClientInfo(), target, parsedCmd[2]);
 	if (type == '#')
 	{
 		std::map<std::string, Channel *>::iterator	chaIter = _channels.find(target);

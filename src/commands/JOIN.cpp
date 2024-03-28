@@ -87,7 +87,7 @@ void Server::JOIN(std::deque<std::string> &parsedCmd, Client &client) {
 
 	// 6. join channel
 	client.joinChannel(channelName, _channels[channelName]);
-	sendMessageToChannel(*_channels[channelName], RPL_JOIN(client.getNickname(), client.getUsername(), channelName));
+	sendMessageToChannel(*_channels[channelName], RPL_JOIN(client.getClientInfo(), channelName));
 	// 7. send RPL_NAMREPLY
 	sendMessageToClient(client.getSocket(), RPL_NAMREPLY(client.getNickname(), channelName, _channels[channelName]->getUsersList()));
 	// 8. send RPL_ENDOFNAMES

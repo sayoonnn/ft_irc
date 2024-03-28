@@ -27,7 +27,7 @@ void Server::QUIT(std::deque<std::string> &parsedCmd, Client &client) {
 		cha = iterChannel->second;
 		cha->delUsers(client.getSocket());
 		if (isNoClientInChannel(iterChannel->first) == 0)
-			sendMessageToChannel(*cha, RPL_QUIT(nickname, username, reason), fds);
+			sendMessageToChannel(*cha, RPL_QUIT(client.getClientInfo(), reason), fds);
 	}
 	
 	if (reason != "EOF from client")
