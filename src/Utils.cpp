@@ -3,6 +3,9 @@
 
 bool util::isAlNum(std::string str) {
 
+	if (str.size() == 0)
+		return (false);
+
 	for (size_t i = 0; i < str.size(); i++) {
 		if (!std::isalnum(str[i]))
 			return (false);
