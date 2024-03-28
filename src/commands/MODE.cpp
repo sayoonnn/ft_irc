@@ -5,16 +5,27 @@
 void Server::MODE(std::deque<std::string> &parsedCmd, Client &client) {
 
 	// param : MODE #channel [mode] [nickname]
-	if (parsedCmd.size() < 3) {
+	if (parsedCmd.size() < 2) {
 		sendMessageToClient(client.getSocket(), ERR_NEEDMOREPARAMS(client.getNickname(), "MODE"));
 		return ;
 	}
 
 	std::string channelName = parsedCmd[1];
-	std::string mode = parsedCmd[2];
 	// 1. check if channelName is channel
 	if (channelName[0] != '#') {
-		sendMessageToClient(client.getSocket(), ERR_NOSUCHCHANNEL(client.getNickname(), channelName));
+		if (_clientsNick.find(channelName) == _clientsNick.end()) {
+			sendMessageToClient(client.getSocket(), ERR_NOSUCHNICK(client.getNickname(), channelName));
+			return ;
+		}
+		if (client.getNickname() != channelName) {
+			sendMessageToClient(client.getSocket(), ERR_USERSDONTMATCH(client.getNickname()));
+			return ;
+		}
+		if (parsedCmd.size() != 2) {
+			sendMessageToClient(client.getSocket(), ERR_UMODEUNKNOWNFLAG(client.getNickname()));
+			return ;
+		}
+		sendMessageToClient(client.getSocket(), RPL_UMODEIS(client.getNickname(), ""));
 		return ;
 	}
 
@@ -23,6 +34,34 @@ void Server::MODE(std::deque<std::string> &parsedCmd, Client &client) {
 		sendMessageToClient(client.getSocket(), ERR_NOSUCHCHANNEL(client.getNickname(), channelName));
 		return ;
 	}
+
+	if (parsedCmd.size() == 2) {
+		std::string			info = "";
+		std::string			flag = "+";
+
+		if (_channels[channelName]->getT() == true)
+			flag += "t";
+		if (_channels[channelName]->getI() == true)
+			flag += "i";
+		if (_channels[channelName]->getMaxNumClients() != MAX_CLIENTS)
+		{
+			std::stringstream	infoStream;
+			flag += "l";
+			infoStream << _channels[channelName]->getMaxNumClients();
+			info += " " + infoStream.str();
+		}
+		if (_channels[channelName]->getKey() != "")
+		{
+			flag += "k";
+			info += " " + _channels[channelName]->getKey();
+		}
+		if (_channels[channelName]->isClientIn(client.getSocket()) != 0)
+			flag += info;
+		sendMessageToClient(client.getSocket(), RPL_CHANNELMODEIS(client.getNickname(), channelName, flag));
+		return ;
+	}
+
+	std::string mode = parsedCmd[2];
 
 	// 3. check if client is in channel
 	if (_channels[channelName]->isClientIn(client.getSocket()) == 0) {

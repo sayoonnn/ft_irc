@@ -21,6 +21,7 @@
 #define ERR_UNEXPECTQUIT(userinfo, reason)						((userinfo) + " QUIT :EOF from client" + "\n")
 #define ERR_CLOSELINK(nickname, username, reason)				(":ERROR :Closing Link: " + (nickname) + "[" + (username) + "@localhost] (" + (reason) + ")\n")
 
+#define RPL_UMODEIS(nickname, mode)								(":ircserv 221 " + (nickname) + " +" + (mode) + "\n")
 #define RPL_NOTOPIC(client, channel)							(":ircserv 331 " + (client) + " " + (channel) + " :No topic is set\n")
 #define RPL_TOPIC(client, channel, topic)						(":ircserv 332 " + (client) + " " + (channel) + " :" + (topic) + "\n")
 #define RPL_TOPICWHOTIME(client, channel, nick, setat)			(":ircserv 333 " + (client) + " " + (channel) + " " + (setat) + "\n")
@@ -56,3 +57,4 @@
 #define ERR_UMODEUNKNOWNFLAG(nickname)							(":ircserv 501 " + (nickname) + " :Unknown MODE flag\n")
 #define ERR_INVITEONLYCHAN(nickname, channel)					(":ircserv 473 " + (nickname) + " " + (channel) + " :Cannot join channel (+i)\n")
 #define ERR_BADCHANNELKEY(nickname, channel)					(":ircserv 475 " + (nickname) + " " + (channel) + " :Cannot join channel (+k)\n")
+#define ERR_USERSDONTMATCH(nickname)							(":ircserv 502 " + (nickname) + " :Cant change mode for other users\n")
