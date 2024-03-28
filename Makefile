@@ -21,6 +21,7 @@ SRC			=	Channel.cpp\
 				ServerCommands.cpp\
 				ServerKqueue.cpp\
 				ServerNetwork.cpp\
+				Utils.cpp\
 				$(CMDS)
 				
 

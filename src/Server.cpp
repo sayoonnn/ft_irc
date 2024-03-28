@@ -1,6 +1,7 @@
 
 #include "Server.hpp"
 #include "Types.hpp"
+#include "Utils.hpp"
 
 int Server::_servSocket = -1;
 int Server::_kqueue = -1;
@@ -17,10 +18,10 @@ void signalHandler(int sig) {
 
 }
 
-Server::Server(char *port, char *password)
-: _password(password)
-{
+Server::Server(char *port, char *password) {
+
 	printServerLog("setup");
+	setPassword(password);
 	openServerSocket(port);
 	makeKqueueReady();
 	makeCmdMap();
@@ -147,4 +148,13 @@ void Server::handleSignal() {
     sa.sa_flags = 0;
 
     sigaction(SIGINT, &sa, NULL);
+}
+
+void Server::setPassword(char *password) {
+
+	if (!util::isAlNum(std::string(password)))
+		closeServer("invalid password");
+
+	_password = std::string(password);
+
 }
