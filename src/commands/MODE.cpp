@@ -12,7 +12,6 @@ void Server::MODE(std::deque<std::string> &parsedCmd, Client &client) {
 	}
 
 	std::string channelName = parsedCmd[1];
-	std::string mode = parsedCmd[2].substr(0, 2);
 	std::string opt;
 
 	if (parsedCmd.size() > 3)
@@ -81,6 +80,7 @@ void Server::MODE(std::deque<std::string> &parsedCmd, Client &client) {
 	}
 
 	// 6. check if mode is valid
+	std::string mode = parsedCmd[2].substr(0, 2);
 	if (mode[0] != '+' && mode[0] != '-') {
 		sendMessageToClient(client.getSocket(), ERR_UNKNOWNMODE(client.getNickname(), mode));
 		return ;
