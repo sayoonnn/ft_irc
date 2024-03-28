@@ -20,6 +20,13 @@ void Server::excuteCommands(Client& client)
 		if (parsedCmd.size() == 0)
 			continue ;
 
+		int last = parsedCmd.size() - 1;
+		if (last >= 0)
+		{
+			std::string& RInStr = parsedCmd[last];
+			if (RInStr.size() != 0 && RInStr[RInStr.size() - 1] == '\r')
+				RInStr = RInStr.substr(0, RInStr.size() - 1);
+		}
 		cmdType = parsedCmd[0];
 
 		if (cmdType == "QUIT") {

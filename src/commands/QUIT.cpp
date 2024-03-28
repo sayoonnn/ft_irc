@@ -7,6 +7,7 @@ void Server::QUIT(std::deque<std::string> &parsedCmd, Client &client) {
 
 	std::string	nickname = "Unknown";
 	std::string	username = "Unknown";
+	std::string	ipAddr = client.getIpAddr();
 	std::string	reason = "";
 	
 	if (client.getNickname() != "")
@@ -31,5 +32,5 @@ void Server::QUIT(std::deque<std::string> &parsedCmd, Client &client) {
 	}
 	
 	if (reason != "EOF from client")
-		sendMessageToClient(client.getSocket(), ERR_CLOSELINK(nickname, username, reason));
+		sendMessageToClient(client.getSocket(), ERR_CLOSELINK(nickname, username, ipAddr, reason));
 }

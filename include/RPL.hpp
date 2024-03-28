@@ -19,7 +19,7 @@
 #define RPL_NICK(userinfo, newnick)								((userinfo) + " NICK " + (newnick) + "\n")
 #define RPL_QUIT(userinfo, reason)								((userinfo) + " QUIT :" + (reason) + "\n")
 #define ERR_UNEXPECTQUIT(userinfo, reason)						((userinfo) + " QUIT :EOF from client" + "\n")
-#define ERR_CLOSELINK(nickname, username, reason)				(":ERROR :Closing Link: " + (nickname) + "[" + (username) + "@localhost] (" + (reason) + ")\n")
+#define ERR_CLOSELINK(nickname, username, ipaddr, ireason)				(":ERROR :Closing Link: " + (nickname) + "[" + (username) + "@" + (ipaddr) + "] (" + (reason) + ")\n")
 
 #define RPL_UMODEIS(nickname, mode)								(":ircserv 221 " + (nickname) + " +" + (mode) + "\n")
 #define RPL_NOTOPIC(client, channel)							(":ircserv 331 " + (client) + " " + (channel) + " :No topic is set\n")
