@@ -128,7 +128,13 @@ void Server::MODE(std::deque<std::string> &parsedCmd, Client &client) {
 				if (!util::isPosNum(opt))
 					return ;
 
-				_channels[channelName]->setMaxNumClients(std::stoi(opt));
+				double limit;
+				std::stringstream ss(opt); ss >> limit;
+
+				if (limit > MAX_CLIENTS)
+					return ;
+
+				_channels[channelName]->setMaxNumClients(static_cast<int>(limit));
 			}
 			else {
 				_channels[channelName]->setMaxNumClients(MAX_CLIENTS);
