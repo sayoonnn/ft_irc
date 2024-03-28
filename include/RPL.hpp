@@ -9,6 +9,7 @@
 
 #define RPL_ERROR(message)										(":ircserv ERROR :" + (message) + "\n")
 #define RPL_PONG(message)										(":ircserv PONG " + (message) + "\n")
+#define RPL_INVITE(nickname, username, inviteuser, channel)		(":" + (nickname) + "!" + (username) + "@localhost INVITE " + (inviteuser) + " :" + (channel) + "\n")
 #define RPL_PRIVMSG(nickname, username, target, message)		(":" + (nickname) + "!" + (username) + "@localhost PRIVMSG " + (target) + " :" + (message) + "\n")
 #define RPL_CHANGETOPIC(nickname, username, channel, topic)		(":" + (nickname) + "!" + (username) + "@localhost TOPIC " + (channel) + " :" + (topic) + "\n")
 #define RPL_KICK(nickname, username, channel, kickuser, reason) (":" + (nickname) + "!" + (username) + "@localhost KICK " + (channel) + " " + (kickuser) + " :" + (reason) + "\n")
