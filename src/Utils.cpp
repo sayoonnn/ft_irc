@@ -15,6 +15,24 @@ bool util::isAlNum(std::string str) {
 
 }
 
+bool util::isPosNum(std::string str) {
+
+	for (size_t i = 1; i < str.size(); i++) {
+		if (!std::isdigit(str[i]))
+			return (false);
+	}
+
+	std::stringstream ss(str);
+	int tmp;
+
+	ss >> tmp;
+	if (tmp <= 0)
+		return (false);
+
+	return (true);
+}
+
+
 void  util::parseCommand(std::string str, std::deque<std::string> &parsedCmd) {
 
 	std::string colonArg;
