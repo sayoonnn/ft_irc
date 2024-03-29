@@ -14,7 +14,7 @@ void Server::excuteCommands(Client& client)
 
 	for (size_t i = 0; i < commands.size(); i++) {
 
-		printClientLog(client.getSocket(), commands[i]);
+		// printClientLog(client.getSocket(), commands[i]);
 
 		if (commands[i].find("\r") != std::string::npos)
 			commands[i] = commands[i].substr(0, commands[i].size() - 1);

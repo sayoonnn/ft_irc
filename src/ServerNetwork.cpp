@@ -35,7 +35,7 @@ void Server::acceptClient() {
 	int clientSocket;
 
 	clientSocket = accept(_servSocket, NULL, NULL);
-	printClientLog(clientSocket, "connected");
+	// printClientLog(clientSocket, "connected");
 
 	fcntl(clientSocket, F_SETFL, O_NONBLOCK);
 	addClientKq(clientSocket);
@@ -50,7 +50,7 @@ void Server::removeClient(int clientSocket) {
 	std::stringstream ss;
 
 	ss << clientSocket;
-	printServerLog("Client " + ss.str() + " disconnected");
+	// printServerLog("Client " + ss.str() + " disconnected");
 
 	Client *client = _clients[clientSocket];
 
@@ -109,7 +109,7 @@ void Server::sendMessageToClient(int clientSocket, std::string message) {
 	
 	ssize_t n;
 
-	printServerLog(message);
+	// printServerLog(message);
 	n = send(clientSocket, message.c_str(), message.size(), 0);
 	if (n <= 0)
 		removeClientUnexpect(clientSocket);

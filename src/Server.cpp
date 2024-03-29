@@ -20,13 +20,13 @@ void signalHandler(int sig) {
 
 Server::Server(char *port, char *password) {
 
-	printServerLog("setup");
 	setPassword(password);
 	openServerSocket(port);
 	makeKqueueReady();
 	makeCmdMap();
 	loadMOTD();
 	handleSignal();
+	printServerLog("running....");
 }
 
 Server::~Server() {
@@ -50,7 +50,7 @@ Server::~Server() {
 
 void Server::runServer() {
 	
-	printServerLog("started");
+	// printServerLog("started");
 	
 	int eventCnt;
 	
