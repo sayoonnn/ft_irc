@@ -25,7 +25,7 @@
 #define RPL_UMODEIS(nickname, mode)								(":ircserv 221 " + (nickname) + " +" + (mode) + "\n")
 #define RPL_NOTOPIC(client, channel)							(":ircserv 331 " + (client) + " " + (channel) + " :No topic is set\n")
 #define RPL_TOPIC(client, channel, topic)						(":ircserv 332 " + (client) + " " + (channel) + " :" + (topic) + "\n")
-#define RPL_TOPICWHOTIME(client, channel, nick, setat)			(":ircserv 333 " + (client) + " " + (channel) + " " + (setat) + "\n")
+#define RPL_TOPICWHOTIME(client, channel, nick, setat)			(":ircserv 333 " + (client) + " " + (channel) + " " + (nick) + " " + (setat) + "\n")
 #define RPL_INVITING(nick, nick2, channel)						(":ircserv 341 " + (nick) + " " + (nick2) + " " + (channel) + "\n")
 #define RPL_NAMREPLY(nickname, channel, users)					(":ircserv 353 " + (nickname) + " = " + (channel) + " :" + (users) + "\n")
 #define RPL_ENDOFNAMES(nickname, channel)						(":ircserv 366 " + (nickname) + " " + (channel) + " :End of NAMES list.\n")
