@@ -9,7 +9,7 @@
 #define RPL_ISUPPORT(nickname)									(":ircserv 005 " + (nickname) + " CHANLIMIT=#:50 CHANMODES=,o,itkl, MAXTARGETS=1 MODES=1 TARGMAX=1 :are supported by this server\n")
 
 #define RPL_ERROR(message)										(":ircserv ERROR :" + (message) + "\n")
-#define RPL_PONG(message)										(":ircserv PONG " + (message) + "\n")
+#define RPL_PONG(message)										(":ircserv PONG ircserv " + (message) + "\n")
 #define RPL_INVITE(userinfo, inviteuser, channel)				((userinfo) + " INVITE " + (inviteuser) + " :" + (channel) + "\n")
 #define RPL_PRIVMSG(userinfo, target, message)					((userinfo) + " PRIVMSG " + (target) + " :" + (message) + "\n")
 #define RPL_CHANGETOPIC(userinfo, channel, topic)				((userinfo) + " TOPIC " + (channel) + " :" + (topic) + "\n")
@@ -18,8 +18,9 @@
 #define RPL_JOIN(userinfo, channel)								((userinfo) + " JOIN :" + (channel) + "\n")
 #define RPL_NICK(userinfo, newnick)								((userinfo) + " NICK " + (newnick) + "\n")
 #define RPL_QUIT(userinfo, reason)								((userinfo) + " QUIT :" + (reason) + "\n")
+#define RPL_MODE(userinfo, channel, mode, option)				((userinfo) + " MODE " + (channel) + " " + (mode) + " " + (option) + "\n")
 #define ERR_UNEXPECTQUIT(userinfo, reason)						((userinfo) + " QUIT :EOF from client" + "\n")
-#define ERR_CLOSELINK(nickname, username, ipaddr, ireason)				(":ERROR :Closing Link: " + (nickname) + "[" + (username) + "@" + (ipaddr) + "] (" + (reason) + ")\n")
+#define ERR_CLOSELINK(nickname, username, ipaddr, ireason)		(":ERROR :Closing Link: " + (nickname) + "[" + (username) + "@" + (ipaddr) + "] (" + (reason) + ")\n")
 
 #define RPL_UMODEIS(nickname, mode)								(":ircserv 221 " + (nickname) + " +" + (mode) + "\n")
 #define RPL_NOTOPIC(client, channel)							(":ircserv 331 " + (client) + " " + (channel) + " :No topic is set\n")
@@ -58,3 +59,4 @@
 #define ERR_INVITEONLYCHAN(nickname, channel)					(":ircserv 473 " + (nickname) + " " + (channel) + " :Cannot join channel (+i)\n")
 #define ERR_BADCHANNELKEY(nickname, channel)					(":ircserv 475 " + (nickname) + " " + (channel) + " :Cannot join channel (+k)\n")
 #define ERR_USERSDONTMATCH(nickname)							(":ircserv 502 " + (nickname) + " :Cant change mode for other users\n")
+#define ERR_INVALIDKEY(nickname, channel)						(":ircserv 525 " + (nickname) + " " + (channel) + " :Key is not well-formed\n")

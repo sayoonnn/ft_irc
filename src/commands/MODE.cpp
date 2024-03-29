@@ -108,6 +108,11 @@ void Server::MODE(std::deque<std::string> &parsedCmd, Client &client) {
 					return ;
 				}
 
+				if (!util::isAlNum(opt)) {
+					sendMessageToClient(client.getSocket(), ERR_INVALIDKEY(client.getNickname(), channelName));
+					return ;
+				}
+
 				_channels[channelName]->setKey(opt);
 			} 
 			else {
@@ -182,8 +187,8 @@ void Server::MODE(std::deque<std::string> &parsedCmd, Client &client) {
 	}
 
 	if (mode == "+k" || mode == "+l" || mode == "+o" || mode == "-o")
-		sendMessageToChannel(*_channels[channelName], RPL_CHANNELMODEIS(client.getNickname(), channelName, mode + " " + opt));
+		sendMessageToChannel(*_channels[channelName], RPL_MODE(client.getClientInfo(), channelName, mode, opt));
 	else
-		sendMessageToChannel(*_channels[channelName], RPL_CHANNELMODEIS(client.getNickname(), channelName, mode));
+		sendMessageToChannel(*_channels[channelName], RPL_MODE(client.getClientInfo(), channelName, mode, ""));
 
 }

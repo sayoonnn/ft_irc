@@ -16,7 +16,7 @@ void Server::excuteCommands(Client& client)
 
 		printClientLog(client.getSocket(), commands[i]);
 
-		if (commands[i].find("\r") == std::string::npos)
+		if (commands[i].find("\r") != std::string::npos)
 			commands[i] = commands[i].substr(0, commands[i].size() - 1);
 
 		util::parseCommand(commands[i], parsedCmd);

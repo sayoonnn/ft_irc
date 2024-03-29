@@ -65,7 +65,7 @@ void Client::getInvitaion(std::string chanName) { _invited.push_back(chanName); 
 void Client::removeInvitaion(std::string chanName) {
 
 	_invited.erase(std::remove(_invited.begin(), _invited.end(), chanName), _invited.end());
-
+	
 }
 
 

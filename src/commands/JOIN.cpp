@@ -50,10 +50,6 @@ void Server::JOIN(std::deque<std::string> &parsedCmd, Client &client) {
 				sendMessageToClient(client.getSocket(), ERR_INVITEONLYCHAN(client.getNickname(), channelName));
 				return ;
 			}
-			// remove channelName from Client::_invited list
-			client.removeInvitaion(channelName);
-			// remove client from Channel::_invite list
-			_channels[channelName]->delInvite(client.getSocket());
 		}
 
 		// 5. check if channel has key (+k)
@@ -78,7 +74,14 @@ void Server::JOIN(std::deque<std::string> &parsedCmd, Client &client) {
 	}
 
 	// 6. join channel
+	
+	// remove channelName from Client::_invited list
+	client.removeInvitaion(channelName);
+	// remove client from Channel::_invite list
+	_channels[channelName]->delInvite(client.getSocket());
+
 	client.joinChannel(channelName, _channels[channelName]);
+
 	sendMessageToChannel(*_channels[channelName], RPL_JOIN(client.getClientInfo(), channelName));
 
 	// 4. check if channel has topic (+t)
