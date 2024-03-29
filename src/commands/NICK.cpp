@@ -49,7 +49,7 @@ void Server::NICK(std::deque<std::string> &parsedCmd, Client &client) {
 	else {
 		_clientsNick.erase(nickIt);
 		_clientsNick[newNick] = &client;
-		sendMessageToClient(client.getSocket(), RPL_NICK(client.getClientInfo(), oldNick));
+		sendMessageToClient(client.getSocket(), RPL_NICK(client.getClientInfo(), newNick));
 	}
 
 	std::map<std::string, Channel *> joinedChannel = client.getChannels();
