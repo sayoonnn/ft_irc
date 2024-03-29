@@ -7,7 +7,7 @@ void	Server::TOPIC(std::deque<std::string> &parsedCmd, Client &client)
 	std::map<std::string, Channel *>::iterator	chaIter;
 	int			fd = client.getSocket();
 	Channel*	channel;
-	std::string	send;
+	std::string	send = client.getNickname() + "!" + client.getUsername() + "@" + client.getIpAddr();
 
 	if (parsedCmd.size() < 2)
 	{
