@@ -10,7 +10,7 @@ void Server::openServerSocket(char *port) {
 	double tmp;
 
 	ss >> tmp;
-	if (ss.fail() || !util::isAlNum(std::string(port)))
+	if (!util::isAlNum(std::string(port)) || ss.fail() || tmp < 1 || tmp > 65535)
 		closeServer("invalid port number");
 
 	_servPort = static_cast<int>(tmp);

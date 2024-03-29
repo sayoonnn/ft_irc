@@ -6,6 +6,9 @@ static bool checkNickname(std::string nick) {
 	
 	std::string notAllow(" &#:,");
 
+	if (nick.size() == 0)
+		return (false);
+
 	for (size_t i = 0; i < nick.size(); i++) {
 		if (notAllow.find(nick[i]) != std::string::npos)
 			return (false);
@@ -56,7 +59,7 @@ void Server::NICK(std::deque<std::string> &parsedCmd, Client &client) {
 	fds.push_back(client.getSocket());
 
 	for (; chanIt != joinedChannel.end(); chanIt++)
-		sendMessageToChannel(*(chanIt->second), RPL_NICK(client.getClientInfo(), oldNick), fds);
+		sendMessageToChannel(*(chanIt->second), RPL_NICK(client.getClientInfo(), newNick), fds);
 
 	client.setNickname(newNick);
 

@@ -77,23 +77,18 @@ void Server::JOIN(std::deque<std::string> &parsedCmd, Client &client) {
 		}
 	}
 
+	// 6. join channel
+	client.joinChannel(channelName, _channels[channelName]);
+	sendMessageToChannel(*_channels[channelName], RPL_JOIN(client.getClientInfo(), channelName));
+
 	// 4. check if channel has topic (+t)
-	if (_channels[channelName]->getTopic().empty())
-		sendMessageToClient(client.getSocket(), RPL_NOTOPIC(client.getNickname(), channelName));
-	else {
+	if (!(_channels[channelName]->getTopic().empty())) {
 		sendMessageToClient(client.getSocket(), RPL_TOPIC(client.getNickname(), channelName, _channels[channelName]->getTopic()));
 		sendMessageToClient(client.getSocket(), RPL_TOPICWHOTIME(client.getNickname(), channelName, _channels[channelName]->getWhoTopic(), _channels[channelName]->getTimeTopic()));
 	}
 
-	// 6. join channel
-	client.joinChannel(channelName, _channels[channelName]);
-	sendMessageToChannel(*_channels[channelName], RPL_JOIN(client.getClientInfo(), channelName));
 	// 7. send RPL_NAMREPLY
 	sendMessageToClient(client.getSocket(), RPL_NAMREPLY(client.getNickname(), channelName, _channels[channelName]->getUsersList()));
 	// 8. send RPL_ENDOFNAMES
 	sendMessageToClient(client.getSocket(), RPL_ENDOFNAMES(client.getNickname(), channelName));
-	// 9. send ":client JOIN #channel" to other clients
-	//std::list<int>	fds;
-	//fds.push_back(client.getSocket());
-	//sendMessageToChannel(*_channels[channelName], ":" + client.getNickname() + "!" + client.getUsername() + "@localhost JOIN " + channelName + "\n", fds);
 }
